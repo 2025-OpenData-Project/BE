@@ -28,4 +28,5 @@ public class Area
     private List<CityDataDto.EventData> events;
     private boolean indoor;//미리 저장
     private int congestion_level;
+    private List<CityDataDto.FutureData> futures;
 }
