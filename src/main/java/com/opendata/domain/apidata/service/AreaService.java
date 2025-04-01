@@ -32,7 +32,7 @@ public class AreaService
                 .map(this::convertToEntity)
                 .filter(Objects::nonNull)
                 .toList();
-        areaRepository.saveAll(areaList);
+        areaRepository.upsertAreaList(areaList);
 
     }
 
@@ -43,22 +43,30 @@ public class AreaService
             return null;
         }
         var data = cityDataDto.getCitydata();
+
+        List<CityDataDto.LivePopulationStatus> livePopulationStatuses = data.getLivePopulationStatuses();
+
+
         Area area = new Area();
         area.setName(data.getAreaName());
         area.setEvents(data.getEventDataList());
-        if (data.getAreaCongestLvl()== null)
+        area.setFutures(livePopulationStatuses.get(0).getFCstPpltn());
+
+        String congestLevel= livePopulationStatuses.get(0).getAreaCongestLvl();
+
+        if (congestLevel== null)
         {
             area.setCongestion_level(0);
         }
-        else if(data.getAreaCongestLvl().equals("여유"))
+        else if(congestLevel.equals("여유"))
         {
             area.setCongestion_level(1);
         }
-        else if(data.getAreaCongestLvl().equals("보통"))
+        else if(congestLevel.equals("보통"))
         {
             area.setCongestion_level(2);
         }
-        else if(data.getAreaCongestLvl().equals("약간 붐빔"))
+        else if(congestLevel.equals("약간 붐빔"))
         {
             area.setCongestion_level(3);
         }
