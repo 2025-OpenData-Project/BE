@@ -6,6 +6,8 @@ import com.opendata.domain.apidata.dto.CityDataDto;
 import com.opendata.domain.apidata.entity.Area;
 import com.opendata.domain.apidata.repository.AreaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +16,13 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AreaService
 {
     private final CityDataService cityDataService;
     private final AreaRepository areaRepository;
 
+    //@Async
     public void fetchAllAreaAndSave()
     {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
