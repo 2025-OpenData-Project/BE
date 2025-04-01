@@ -1,5 +1,6 @@
 package com.opendata.domain.apidata.entity;
 
+import com.opendata.domain.apidata.dto.CityDataDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ public class Area
 
     private double latitude;//미리 저장
     private double longitude;//미리 저장
-    private List<String> events;
+    private List<CityDataDto.EventData> events;
     private boolean indoor;//미리 저장
     private int congestion_level;
 }
