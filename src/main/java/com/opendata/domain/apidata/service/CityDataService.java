@@ -35,7 +35,6 @@ public class CityDataService
 
 
     @Async
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     public CompletableFuture<CityDataDto> fetchCityData(String areaName)
     {
         try {
