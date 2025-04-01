@@ -22,10 +22,19 @@ public class CityDataDto
     {
         @JsonProperty("AREA_NM")
         private String areaName;
-        @JsonProperty("AREA_CONGEST_LVL")
-        private String areaCongestLvl;
         @JsonProperty("EVENT_STTS")
         private List<EventData> eventDataList;
+        @JsonProperty("LIVE_PPLTN_STTS")
+        private List<LivePopulationStatus> livePopulationStatuses;
+
+
+    }
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class LivePopulationStatus
+    {
+        @JsonProperty("AREA_CONGEST_LVL")
+        private String areaCongestLvl;
         @JsonProperty("FCST_PPLTN")
         private List<FutureData> fCstPpltn;
     }
