@@ -1,0 +1,46 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  cache:
+    type: redis
+  data:
+    mongodb:
+      uri: mongodb+srv://admin:admin@cluster0.edjo3.mongodb.net/
+      database: opendata
+    redis:
+      host: redis-18096.c1.us-central1-2.gce.redns.redis-cloud.com
+      port: 18096
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      timeout: 6000ms
+
+
+
+jwt:
+  issuer: project.doctalk@gmail.com
+  secret: "jfsgkhdsjkweoiruwqejkrfbhnsadkjlfghbwerqewrsdfgdsfagbdf"
+  access-expiration: 3600
+  refresh-expiration: 8640
+
+server:
+  max-http-header-size: 16KB
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 1024 # 1KB ??? ??? ?? ??
+
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+
+
+openai:
+  api:
+    url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
+    key: ${OPENAI_API_KEY}
+
+IMP_API_KEY: ${IMP_API_KEY}
+IMP_API_SECRET: ${IMP_API_SECRET}
