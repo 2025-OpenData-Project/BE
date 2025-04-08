@@ -53,7 +53,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-
+        http.csrf(csrf->csrf.disable());
         //WebMvcConfig 설정에 따름
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
