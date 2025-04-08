@@ -15,6 +15,7 @@ import java.util.List;
 public class Course {
     @Id
     private String id;
+    private String userId;
     private List<String> places;
     private int placeCount;
     private String startTime;
