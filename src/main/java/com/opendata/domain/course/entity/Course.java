@@ -19,4 +19,5 @@ public class Course {
     private int placeCount;
     private String startTime;
     private String endTime;
+    private boolean isFavorite;
 }
