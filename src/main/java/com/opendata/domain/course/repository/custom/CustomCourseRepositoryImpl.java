@@ -1,6 +1,7 @@
 package com.opendata.domain.course.repository.custom;
 
 import com.opendata.domain.apidata.entity.Area;
+import com.opendata.domain.course.entity.Course;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,5 +19,11 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository{
         Query query = new Query(Criteria.where("congestion_level").in(1,2));
 
         return mongoTemplate.find(query, Area.class);
+    }
+
+    @Override
+    public List<Course> findCoursesByUserId(String userId) {
+        Query query = new Query(Criteria.where("userId").is(userId));
+        return mongoTemplate.find(query, Course.class);
     }
 }
