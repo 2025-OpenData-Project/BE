@@ -29,4 +29,12 @@ public class WishListService
         String userId=jwtUtil.getId(acessToken);
         return courseRepository.findCoursesByUserId(userId);
     }
+
+    public String deleteCourse(String courseId)
+    {
+        Course course=courseRepository.findById(courseId).get();
+        course.setFavorite(false);
+        courseRepository.save(course);
+        return courseId;
+    }
 }

@@ -32,4 +32,11 @@ public class WishListController
         return ResponseEntity.ok(ApiResponse.onSuccess(wishListService.getCourses(acessToken)));
 
     }
+    @PutMapping("/delete")
+    public ResponseEntity<ApiResponse<String>> deleteCourse(@RequestParam String courseId)
+    {
+        return ResponseEntity.ok(ApiResponse.onSuccess(wishListService.deleteCourse(courseId)));
+    }
+
+
 }
