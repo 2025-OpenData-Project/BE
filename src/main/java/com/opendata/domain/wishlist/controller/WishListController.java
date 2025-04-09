@@ -27,9 +27,9 @@ public class WishListController
         return ResponseEntity.ok(ApiResponse.onSuccess(wishListService.getCourseOne(courseId)));
     }
     @GetMapping("/get/list")
-    public ResponseEntity<ApiResponse<List<Course>>> findCourses(@RequestHeader("Authorization")String acessToken)
+    public ResponseEntity<ApiResponse<List<Course>>> findCourses(@AuthenticationPrincipal CustomUserDetails userDetails)
     {
-        return ResponseEntity.ok(ApiResponse.onSuccess(wishListService.getCourses(acessToken)));
+        return ResponseEntity.ok(ApiResponse.onSuccess(wishListService.getCourses(userDetails)));
 
     }
     @PutMapping("/delete")
@@ -37,6 +37,14 @@ public class WishListController
     {
         return ResponseEntity.ok(ApiResponse.onSuccess(wishListService.deleteCourse(courseId)));
     }
+
+    @PutMapping("/select/active")
+    public ResponseEntity<ApiResponse<Course>> selectCourse(@RequestParam String courseId)
+    {
+        return  ResponseEntity.ok(ApiResponse.onSuccess(wishListService.selectCourse(courseId)));
+    }
+
+
 
 
 }
