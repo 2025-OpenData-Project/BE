@@ -7,13 +7,16 @@ import com.opendata.domain.course.repository.CourseRepository;
 import com.opendata.global.jwt.JwtUtil;
 import com.opendata.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WishListService
 {
     private final CourseRepository courseRepository;
@@ -24,9 +27,10 @@ public class WishListService
         return courseRepository.findById(courseId).get();
     }
 
-    public List<Course> getCourses(String acessToken)
+    public List<Course> getCourses(CustomUserDetails userDetails)
     {
-        String userId=jwtUtil.getId(acessToken);
+        String userId=userDetails.getUserId();
+        log.info("userId:{}",userId);
         return courseRepository.findCoursesByUserId(userId);
     }
 
@@ -37,4 +41,18 @@ public class WishListService
         courseRepository.save(course);
         return courseId;
     }
+
+    @Transactional
+    public Course selectCourse(String courseId)
+    {
+        Course course=courseRepository.findById(courseId).get();
+        Course activeCourse= courseRepository.findCourseByIdWithActive();
+        activeCourse.setActive(false);
+        course.setActive(true);
+        courseRepository.save(activeCourse);
+        courseRepository.save(course);
+        return course;
+
+    }
+
 }
