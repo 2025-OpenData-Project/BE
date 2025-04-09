@@ -26,4 +26,10 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository{
         Query query = new Query(Criteria.where("userId").is(userId));
         return mongoTemplate.find(query, Course.class);
     }
+
+    @Override
+    public Course findCourseByIdWithActive() {
+        Query query = new Query(Criteria.where("active").is(true));
+        return mongoTemplate.findOne(query, Course.class);
+    }
 }
