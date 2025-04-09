@@ -21,4 +21,5 @@ public class Course {
     private String startTime;
     private String endTime;
     private boolean isFavorite;
+    private boolean active;
 }
