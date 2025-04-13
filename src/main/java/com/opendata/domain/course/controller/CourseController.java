@@ -1,15 +1,19 @@
 package com.opendata.domain.course.controller;
 
-import com.opendata.domain.apidata.entity.Area;
+
+import com.opendata.domain.course.dto.response.CourseLikeRequest;
 import com.opendata.domain.course.dto.response.CourseResultResponse;
+import com.opendata.domain.course.dto.response.CourseSpecResponse;
+import com.opendata.domain.course.entity.Course;
 import com.opendata.domain.course.service.CourseService;
-import com.opendata.domain.course.util.CourseUtil;
+
 import com.opendata.global.response.ApiResponse;
+import com.opendata.global.security.CustomUserDetails;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +24,24 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping("/get")
-    public ResponseEntity<ApiResponse<List<CourseResultResponse>>> findCourses(
-            double lat, double lon, String startTime, String endTime){
-        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.findAllCourses(lat, lon, startTime, endTime)));
+    public ResponseEntity<ApiResponse<CourseResultResponse>> findCourses(
+            @RequestParam double lat,
+            @RequestParam double lon,
+            @RequestParam String startTime,
+            @RequestParam String endTime){
+        return ResponseEntity.ok(ApiResponse.onSuccess(
+                courseService.recommendCourses(lat, lon, startTime, endTime)));
+    }
+
+    @PostMapping("/like")
+    public ResponseEntity<ApiResponse<Course>> postCourseLike(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody CourseLikeRequest request){
+        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.likeCourse(customUserDetails, request)));
+    }
+
+    @GetMapping("/spec/{courseId}")
+    public ResponseEntity<ApiResponse<CourseSpecResponse>> getCourseSpec(@PathVariable String courseId){
+        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.findCourseSpec(courseId)));
     }
 }
