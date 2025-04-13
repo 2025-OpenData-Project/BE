@@ -12,18 +12,25 @@ public record AreaComponentDto(
         String image,
         double lat,
         double lon,
+        List<CityDataDto.EventData> events,
         boolean indoor,
-        int congestion_level
+        int congestion_level,
+        String time
 ) {
-    public static AreaComponentDto from(Area area){
+
+
+    public static AreaComponentDto from(FilteredArea area, String time){
         return AreaComponentDto.builder()
-                .name(area.getName())
-                .category(area.getCategory())
-                .image(area.getImage())
-                .lat(area.getLatitude())
-                .lon(area.getLongitude())
-                .indoor(area.isIndoor())
-                .congestion_level(area.getCongestion_level())
+                .name(area.name())
+                .category(area.category())
+                .image(area.image())
+                .lat(area.lat())
+                .lon(area.lon())
+                .indoor(area.indoor())
+                .congestion_level(area.congestionLevel())
+                .time(time)
                 .build();
     }
+
+
 }
