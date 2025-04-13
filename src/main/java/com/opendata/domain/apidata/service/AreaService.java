@@ -23,7 +23,6 @@ public class AreaService
     private final CityDataService cityDataService;
     private final AreaRepository areaRepository;
 
-    //@Async
     @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     public void fetchAllAreaAndSave()
     {

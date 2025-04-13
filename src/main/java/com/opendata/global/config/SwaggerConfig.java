@@ -12,7 +12,7 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         Info info = new Info()
                 .version("v1.0")
-                .title("DocTalk API");
+                .title("OpenData API");
         return new OpenAPI()
                 .info(info);
     }

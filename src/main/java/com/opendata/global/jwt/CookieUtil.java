@@ -34,15 +34,6 @@ public class CookieUtil {
                 .build();
     }
 
-    public Cookie createCsrfCookie(HttpServletRequest request, HttpServletResponse response){
-        CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
-        Cookie csrfCookie = new Cookie("XSRF-TOKEN", csrfToken.getToken());
-        csrfCookie.setSecure(false);
-        csrfCookie.setPath("/");
-        response.addCookie(csrfCookie);
-
-        return csrfCookie;
-    }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Optional.ofNullable(request.getCookies())
