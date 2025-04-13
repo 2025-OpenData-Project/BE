@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -56,7 +55,7 @@ public class SecurityConfig {
 
         //WebMvcConfig 설정에 따름
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
+        http.csrf(csrf -> csrf.disable());
         //FormLogin, BasicHttp 비활성화
         http.formLogin((auth) -> auth.disable());
         http.httpBasic((auth) -> auth.disable());
@@ -93,7 +92,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:63342"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true); // 쿠키 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
