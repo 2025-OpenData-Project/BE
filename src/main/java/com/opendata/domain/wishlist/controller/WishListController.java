@@ -1,6 +1,7 @@
 package com.opendata.domain.wishlist.controller;
 
 import com.opendata.domain.course.dto.response.CourseResultResponse;
+import com.opendata.domain.course.dto.response.CourseSpecResponse;
 import com.opendata.domain.course.entity.Course;
 import com.opendata.domain.wishlist.service.WishListService;
 import com.opendata.global.jwt.JwtUtil;
@@ -43,6 +44,12 @@ public class WishListController
     {
         return  ResponseEntity.ok(ApiResponse.onSuccess(wishListService.selectCourse(courseId)));
     }
+
+    @GetMapping("/share/{id}")
+    public ResponseEntity<ApiResponse<CourseSpecResponse>> getSharedCourse(@PathVariable String courseId) {
+        return  ResponseEntity.ok(ApiResponse.onSuccess(wishListService.shareCourse(courseId)));
+    }
+
 
 
 

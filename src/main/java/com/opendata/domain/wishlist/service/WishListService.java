@@ -2,6 +2,7 @@ package com.opendata.domain.wishlist.service;
 
 
 import com.opendata.domain.course.dto.response.CourseResultResponse;
+import com.opendata.domain.course.dto.response.CourseSpecResponse;
 import com.opendata.domain.course.entity.Course;
 import com.opendata.domain.course.repository.CourseRepository;
 import com.opendata.global.jwt.JwtUtil;
@@ -37,7 +38,7 @@ public class WishListService
     public String deleteCourse(String courseId)
     {
         Course course=courseRepository.findById(courseId).get();
-        course.setFavorite(false);
+        course.setLike(false);
         courseRepository.save(course);
         return courseId;
     }
@@ -54,5 +55,12 @@ public class WishListService
         return course;
 
     }
+    public CourseSpecResponse shareCourse(String courseId)
+    {
+        Course course=courseRepository.findById(courseId).get();
+        return CourseSpecResponse.from(course);
+    }
+
+
 
 }
