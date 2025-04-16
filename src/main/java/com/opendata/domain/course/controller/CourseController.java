@@ -25,12 +25,13 @@ public class CourseController {
 
     @GetMapping("/get")
     public ResponseEntity<ApiResponse<CourseResultResponse>> findCourses(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam double lat,
             @RequestParam double lon,
             @RequestParam String startTime,
             @RequestParam String endTime){
         return ResponseEntity.ok(ApiResponse.onSuccess(
-                courseService.recommendCourses(lat, lon, startTime, endTime)));
+                courseService.recommendCourses(customUserDetails, lat, lon, startTime, endTime)));
     }
 
     @PostMapping("/like")
