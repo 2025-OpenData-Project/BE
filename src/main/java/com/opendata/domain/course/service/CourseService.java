@@ -30,8 +30,11 @@ public class CourseService {
     private final UserRepository userRepository;
 
 
-    // TODO: 멤버쉽 플랜 별로 제한하기
-    public CourseResultResponse recommendCourses(double userLat, double userLon, String startTime, String endTime) {
+    public CourseResultResponse recommendCourses(CustomUserDetails customUserDetails, double userLat, double userLon, String startTime, String endTime) {
+        String email = customUserDetails.getEmail();
+        User user = userRepository.findUserByEmail(email);
+
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         List<FilteredArea> candidates = getFilteredCandidates(userLat, userLon, startTime, endTime, formatter);
 
@@ -44,7 +47,7 @@ public class CourseService {
                 resultCourses.add(course);
                 course.forEach(a -> usedAreaIds.add(a.name()));
             }
-            if (resultCourses.size() >= 10) break;
+            if (resultCourses.size() >= user.getMemberShip().getCourseLimit()) break;
         }
 
         return CourseResultResponse.from(resultCourses, resultCourses.size(), startTime, endTime);
