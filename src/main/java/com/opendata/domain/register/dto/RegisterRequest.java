@@ -1,5 +1,6 @@
 package com.opendata.domain.register.dto;
 
+import com.opendata.domain.user.entity.MemberShip;
 import com.opendata.domain.user.entity.User;
 
 
@@ -11,6 +12,7 @@ public record RegisterRequest(
         return User.builder()
                 .email(email)
                 .password(encodedPassword)
+                .memberShip(MemberShip.FREE)
                 .build();
     }
 }
