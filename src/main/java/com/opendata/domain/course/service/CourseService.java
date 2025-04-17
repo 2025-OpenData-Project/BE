@@ -31,9 +31,7 @@ public class CourseService {
 
 
     public CourseResultResponse recommendCourses(CustomUserDetails customUserDetails, double userLat, double userLon, String startTime, String endTime) {
-        String email = customUserDetails.getEmail();
-        User user = userRepository.findUserByEmail(email);
-
+        User user = customUserDetails.getUser();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         List<FilteredArea> candidates = getFilteredCandidates(userLat, userLon, startTime, endTime, formatter);
