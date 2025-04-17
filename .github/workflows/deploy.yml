@@ -53,4 +53,3 @@ jobs:
             sudo docker compose down || true
             sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
             sudo docker compose -f compose.yml up -d --build
-            
