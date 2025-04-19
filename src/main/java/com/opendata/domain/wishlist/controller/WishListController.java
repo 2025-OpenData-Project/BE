@@ -40,9 +40,9 @@ public class WishListController
     }
 
     @PutMapping("/select/active")
-    public ResponseEntity<ApiResponse<Course>> selectCourse(@RequestParam String courseId)
+    public ResponseEntity<ApiResponse<Course>> selectCourse(@RequestParam String courseId,@AuthenticationPrincipal CustomUserDetails userDetails)
     {
-        return  ResponseEntity.ok(ApiResponse.onSuccess(wishListService.selectCourse(courseId)));
+        return  ResponseEntity.ok(ApiResponse.onSuccess(wishListService.selectCourse(courseId,userDetails)));
     }
 
     @GetMapping("/share/{id}")
