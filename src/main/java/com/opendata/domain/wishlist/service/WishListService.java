@@ -38,16 +38,16 @@ public class WishListService
     public String deleteCourse(String courseId)
     {
         Course course=courseRepository.findById(courseId).get();
-        course.setLike(false);
-        courseRepository.save(course);
+        courseRepository.delete(course);
         return courseId;
     }
 
     @Transactional
-    public Course selectCourse(String courseId)
+    public Course selectCourse(String courseId,CustomUserDetails userDetails)
     {
+        String userId=userDetails.getUserId();
         Course course=courseRepository.findById(courseId).get();
-        Course activeCourse= courseRepository.findCourseByIdWithActive();
+        Course activeCourse= courseRepository.findCourseByIdWithActive(userId);
         activeCourse.setActive(false);
         course.setActive(true);
         courseRepository.save(activeCourse);
