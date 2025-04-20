@@ -1,5 +1,6 @@
 package com.opendata.domain.wishlist.controller;
 
+import com.opendata.docs.WishlistControllerDocs;
 import com.opendata.domain.course.dto.response.CourseResultResponse;
 import com.opendata.domain.course.dto.response.CourseSpecResponse;
 import com.opendata.domain.course.entity.Course;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/wishlist")
-public class WishListController
+public class WishListController implements WishlistControllerDocs
 {
     private final WishListService wishListService;
 
@@ -40,9 +41,9 @@ public class WishListController
     }
 
     @PutMapping("/select/active")
-    public ResponseEntity<ApiResponse<Course>> selectCourse(@RequestParam String courseId)
+    public ResponseEntity<ApiResponse<Course>> selectCourse(@RequestParam String courseId,@AuthenticationPrincipal CustomUserDetails userDetails)
     {
-        return  ResponseEntity.ok(ApiResponse.onSuccess(wishListService.selectCourse(courseId)));
+        return  ResponseEntity.ok(ApiResponse.onSuccess(wishListService.selectCourse(courseId,userDetails)));
     }
 
     @GetMapping("/share/{id}")
