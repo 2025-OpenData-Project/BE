@@ -30,11 +30,10 @@ public class CourseService {
     private final UserRepository userRepository;
 
 
-    public CourseResultResponse recommendCourses(CustomUserDetails customUserDetails, double userLat, double userLon, String startTime, String endTime) {
-        User user = customUserDetails.getUser();
+    public CourseResultResponse recommendCourses( double userLat, double userLon, String startTime, String endTime, String tourspot) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        List<FilteredArea> candidates = getFilteredCandidates(userLat, userLon, startTime, endTime, formatter);
+        List<FilteredArea> candidates = getFilteredCandidates(userLat, userLon, startTime, endTime, tourspot, formatter);
 
         List<List<AreaComponentDto>> resultCourses = new ArrayList<>();
         Set<String> usedAreaIds = new HashSet<>();
@@ -45,17 +44,17 @@ public class CourseService {
                 resultCourses.add(course);
                 course.forEach(a -> usedAreaIds.add(a.name()));
             }
-            if (resultCourses.size() >= user.getMemberShip().getCourseLimit()) break;
+            if (resultCourses.size() >= 5) break;
         }
 
         return CourseResultResponse.from(resultCourses, resultCourses.size(), startTime, endTime);
     }
 
-    private List<FilteredArea> getFilteredCandidates(double userLat, double userLon, String startTime, String endTime, DateTimeFormatter formatter) {
+    private List<FilteredArea> getFilteredCandidates(double userLat, double userLon, String startTime, String endTime, String tourspot, DateTimeFormatter formatter) {
         return areaRepository.findAll().stream()
                 .flatMap(area -> area.getFutures().stream()
                         .filter(f -> isInTimeRange(f.getFcstTime(), startTime, endTime))
-                        .filter(f -> f.getFcstCongestLvl().equals("여유") || f.getFcstCongestLvl().equals("보통"))
+                        .filter(f -> f.getFcstCongestLvl().equals("여유") || f.getFcstCongestLvl().equals("보통") || area.getName().equals(tourspot))
                         .map(f -> new FilteredArea(
                                 area.getId(),
                                 area.getName(),

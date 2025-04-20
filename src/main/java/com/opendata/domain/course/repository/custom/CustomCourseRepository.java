@@ -8,5 +8,5 @@ import java.util.List;
 public interface CustomCourseRepository {
     List<Area> findQuietAreas();
     List<Course> findCoursesByUserId(String userId);
-    Course findCourseByIdWithActive();
+    Course findCourseByIdWithActive(String userId);
 }
