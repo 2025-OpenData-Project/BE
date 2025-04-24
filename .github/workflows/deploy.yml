@@ -41,28 +41,19 @@ jobs:
       - name: Docker 이미지 푸시
         run: docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
 
-#      - name: SSH로 GCE에 접속하여 배포
-#        uses: appleboy/ssh-action@v1.0.3
-#        with:
-#          host: ${{ secrets.GCE_HOST }}
-#          username: ${{ secrets.GCE_USERNAME }}
-#          key: ${{ secrets.GCE_PRIVATE_KEY }}
-#          script_stop: true
-#          script: |
-#            cd /home/${{ secrets.GCE_USERNAME }}
-#            sudo docker compose down || true
-#            sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
-#            sudo docker compose -f compose.yml up -d --build
-      - name: Cloud Run 배포
-        run: |
-          gcloud run deploy opendata \
-            --image asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest \
-            --platform managed \
-            --region asia-northeast3 \
-            --allow-unauthenticated \
-            --port 8080 \
-            --memory 512Mi
-
+      - name: SSH로 GCE에 접속하여 배포
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GCE_HOST }}
+          username: ${{ secrets.GCE_USERNAME }}
+          key: ${{ secrets.GCE_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            cd /home/${{ secrets.GCE_USERNAME }}
+            sudo docker compose down || true
+            sudo docker pull asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
+            sudo docker compose -f compose.yml up -d --build
+            
 
 
 
