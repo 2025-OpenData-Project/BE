@@ -2,15 +2,18 @@ package com.opendata.domain.apidata.service;
 
 
 import com.opendata.domain.apidata.api.AreaApi;
+import com.opendata.domain.apidata.dto.AreaCongestionDto;
 import com.opendata.domain.apidata.dto.CityDataDto;
 import com.opendata.domain.apidata.entity.Area;
 import com.opendata.domain.apidata.repository.AreaRepository;
+import com.opendata.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -79,5 +82,22 @@ public class AreaService
             area.setCongestion_level(4);
         }
         return area;
+    }
+
+    public List<AreaCongestionDto> mapToClosestTimeList(List<Area> areas, String currentTime) {
+        return areas.stream()
+                .map(area -> area.getFutures().stream()
+                        .filter(f -> f.getFcstTime().compareTo(currentTime) <= 0)
+                        .max(Comparator.comparing(CityDataDto.FutureData::getFcstTime))
+                        .map(f -> new AreaCongestionDto(area.getName(), f.getFcstCongestLvl()))
+                        .orElse(null)
+                )
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    public List<AreaCongestionDto> fetchAndConvertAreaCongestionDto(){
+        String currentTime = DateUtil.getCurrentFormattedDateTime();
+        return mapToClosestTimeList(areaRepository.findAreaWithCongestionByCurrentTime(currentTime), currentTime);
     }
 }
