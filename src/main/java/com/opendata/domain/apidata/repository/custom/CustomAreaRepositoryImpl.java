@@ -30,4 +30,13 @@ public class CustomAreaRepositoryImpl implements CustomAreaRepository
             mongoTemplate.upsert(query, update, Area.class);
         }
     }
+
+    @Override
+    public List<Area> findAreaWithCongestionByCurrentTime(String currentTime) {
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("futures.fcstTime").lte(currentTime));
+
+        return mongoTemplate.find(query, Area.class);
+    }
 }
