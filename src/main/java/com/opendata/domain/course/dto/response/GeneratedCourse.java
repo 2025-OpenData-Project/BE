@@ -1,6 +1,6 @@
 package com.opendata.domain.course.dto.response;
 
-import com.opendata.domain.apidata.dto.AreaComponentDto;
+import com.opendata.domain.tourspot.dto.AreaComponentDto;
 
 import java.util.List;
 
