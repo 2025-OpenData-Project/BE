@@ -1,24 +1,32 @@
 package com.opendata.domain.user.entity;
 
 import com.opendata.domain.register.dto.RegisterRequest;
+import com.opendata.global.entity.BaseEntity;
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-@Document(collection = "users")
-@Builder
+@Entity
+@Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Builder
+public class User extends BaseEntity {
+
     @Id
-    private String id;
+    @Column(name = "user_id", nullable = false)
+    private Long id;
+
+    @Column(name = "membership_id", nullable = false)
+    private Long membershipId;
+
+    @Column(name = "user_email")
     private String email;
+
+    @Column(name = "user_pw")
     private String password;
-    private MemberShip memberShip;
+
+    @Column(name = "user_nickname")
+    private String userNickname;
 }
