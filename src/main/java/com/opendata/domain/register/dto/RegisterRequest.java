@@ -12,7 +12,7 @@ public record RegisterRequest(
         return User.builder()
                 .email(email)
                 .password(encodedPassword)
-                .memberShip(MemberShip.FREE)
+                .membershipId(1L)
                 .build();
     }
 }

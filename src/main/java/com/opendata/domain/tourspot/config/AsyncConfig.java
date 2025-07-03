@@ -1,4 +1,4 @@
-package com.opendata.domain.apidata.config;
+package com.opendata.domain.tourspot.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;

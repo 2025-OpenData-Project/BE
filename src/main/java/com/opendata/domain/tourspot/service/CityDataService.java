@@ -1,12 +1,11 @@
-package com.opendata.domain.apidata.service;
+package com.opendata.domain.tourspot.service;
 
-import com.opendata.domain.apidata.dto.CityDataDto;
+import com.opendata.domain.tourspot.dto.CityDataDto;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,7 +14,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
-import static com.opendata.domain.apidata.api.AreaApi.AreaEndPoint.BASE_URL;
+import static com.opendata.domain.tourspot.api.AreaApi.AreaEndPoint.BASE_URL;
 
 @Service
 @Slf4j

@@ -1,6 +1,7 @@
 package com.opendata.global.security;
 
 import com.opendata.domain.user.entity.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
@@ -19,7 +21,6 @@ public class CustomUserDetails implements UserDetails {
     public String getEmail() {
         return user.getEmail();
     }
-    public User getUser() {return user;}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -37,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
         return user.getPassword();
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return user.getId();
     }
 

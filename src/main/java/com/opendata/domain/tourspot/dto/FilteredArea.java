@@ -1,4 +1,4 @@
-package com.opendata.domain.apidata.dto;
+package com.opendata.domain.tourspot.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;

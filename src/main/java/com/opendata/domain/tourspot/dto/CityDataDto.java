@@ -1,8 +1,10 @@
-package com.opendata.domain.apidata.dto;
+package com.opendata.domain.tourspot.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.opendata.domain.tourspot.entity.TourSpot;
+import com.opendata.domain.tourspot.entity.TourSpotEvent;
 import lombok.Data;
 
 import java.util.List;
@@ -26,8 +28,6 @@ public class CityDataDto
         private List<EventData> eventDataList;
         @JsonProperty("LIVE_PPLTN_STTS")
         private List<LivePopulationStatus> livePopulationStatuses;
-
-
     }
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -67,7 +67,6 @@ public class CityDataDto
         private String thumbnail;
         @JsonProperty("URL")
         private String url;
-
     }
 
 }

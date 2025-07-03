@@ -1,8 +1,7 @@
-package com.opendata.domain.apidata.api;
+package com.opendata.domain.tourspot.api;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

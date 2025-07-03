@@ -1,6 +1,5 @@
-package com.opendata.domain.apidata.dto;
+package com.opendata.domain.tourspot.dto;
 
-import com.opendata.domain.apidata.entity.Area;
 import lombok.Builder;
 
 import java.util.List;
