@@ -1,5 +1,6 @@
 package com.opendata.domain.tourspot.entity;
 
+import com.opendata.global.entity.BaseEntity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -8,7 +9,7 @@ import lombok.Getter;
 
 @MappedSuperclass
 @Getter
-public abstract class TourSpotAssociated {
+public abstract class TourSpotAssociated extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tourspot_id")
     private TourSpot tourspot;

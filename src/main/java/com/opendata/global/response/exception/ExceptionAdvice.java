@@ -1,7 +1,7 @@
 package com.opendata.global.response.exception;
 
 import com.opendata.global.response.ApiResponse;
-import com.opendata.global.response.ErrorInfoDto;
+import com.opendata.global.response.ErrorDetail;
 import com.opendata.global.response.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -81,14 +81,14 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity onThrowException(GlobalException globalException,
                                            HttpServletRequest request) {
 
-        ErrorInfoDto errorReasonHttpStatus = globalException.getErrorReasonHttpStatus();
-        return handleExceptionInternal(globalException, errorReasonHttpStatus, null, request);
+        ErrorDetail errorDetail = globalException.getErrorDetail();
+        return handleExceptionInternal(globalException, errorDetail, null, request);
     }
 
-    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorInfoDto info,
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorDetail detail,
                                                            HttpHeaders headers, HttpServletRequest request) {
 
-        ApiResponse<Object> body = ApiResponse.onFailure(info.code(), info.message(),
+        ApiResponse<Object> body = ApiResponse.onFailure(detail.code(), detail.message(),
                 null);
         WebRequest webRequest = new ServletWebRequest(request);
 
@@ -96,7 +96,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 e,
                 body,
                 headers,
-                info.httpStatus(),
+                detail.httpStatus(),
                 webRequest
         );
     }

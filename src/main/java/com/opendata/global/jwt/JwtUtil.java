@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,11 +31,11 @@ public class JwtUtil {
 
     //객체 키 생성
     private SecretKey secretKey;
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     //검증 메서드
 
-    public JwtUtil(@Value("${jwt.secret}") String secret, UserRepository userRepository) {
+    public JwtUtil(@Value("${jwt.secret}") String secret, @Lazy UserRepository userRepository) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
         this.userRepository = userRepository;
     }

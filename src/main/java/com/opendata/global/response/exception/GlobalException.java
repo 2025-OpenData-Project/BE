@@ -1,21 +1,21 @@
 package com.opendata.global.response.exception;
 
-import com.opendata.global.response.BaseErrorCode;
-import com.opendata.global.response.ErrorInfoDto;
+import com.opendata.global.response.BaseStatusCode;
+import com.opendata.global.response.ErrorDetail;
 import lombok.Getter;
 
 @Getter
 public class GlobalException extends RuntimeException {
 
-    private final BaseErrorCode code;
+    private final BaseStatusCode code;
 
-    public GlobalException(BaseErrorCode code) {
+    public GlobalException(BaseStatusCode code) {
         super(code.getMessage());
         this.code = code;
     }
 
-    public ErrorInfoDto getErrorReasonHttpStatus() {
-        return this.code.getReasonHttpStatus();
+    public ErrorDetail getErrorDetail() {
+        return ErrorDetail.from(this.code);
     }
 
 }

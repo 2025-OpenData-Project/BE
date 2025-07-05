@@ -1,6 +1,7 @@
 package com.opendata.domain.tourspot.entity;
 
-import com.opendata.global.commoncode.entity.CommonCode;
+import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,11 +19,10 @@ public class TourSpotFutureCongestion extends TourSpotAssociated {
 
     private String fcstTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "congestion_lvl_cd")
-    private CommonCode congestionLvl;
+    @Enumerated(EnumType.STRING)
+    private CongestionLevel congestionLvl;
 
-    public void assignCongestion(CommonCode code){
-        this.congestionLvl = code;
+    public void assignCongestion(CongestionLevel level){
+        this.congestionLvl = level;
     }
 }

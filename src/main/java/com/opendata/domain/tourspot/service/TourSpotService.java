@@ -6,10 +6,9 @@ import com.opendata.domain.tourspot.dto.CityDataDto;
 
 import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
+import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 import com.opendata.domain.tourspot.mapper.FutureCongestionMapper;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
-import com.opendata.global.commoncode.entity.CommonCode;
-import com.opendata.global.commoncode.service.CommonCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class TourSpotService
 {
-    private final CommonCodeService commonCodeService;
     private final CityDataService cityDataService;
     private final TourSpotRepository tourSpotRepository;
     private final FutureCongestionMapper mapper;
@@ -65,8 +63,8 @@ public class TourSpotService
 
         livePopulationStatuses.forEach(status -> {
             status.getFCstPpltn().forEach(futureData -> {
-                CommonCode congestionCode = commonCodeService.getByCodeNm(futureData.getFcstCongestLvl());
-                TourSpotFutureCongestion congestion = mapper.mapWithExtra(futureData, tourSpot, congestionCode);
+                CongestionLevel congestionLevel = CongestionLevel.resolve(futureData.getFcstCongestLvl());
+                TourSpotFutureCongestion congestion = mapper.mapWithExtra(futureData, tourSpot, congestionLevel);
                 futureCongestions.add(congestion);
             });
         });

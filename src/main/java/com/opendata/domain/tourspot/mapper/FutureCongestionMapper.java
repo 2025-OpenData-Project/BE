@@ -6,7 +6,8 @@ import com.opendata.domain.tourspot.dto.CityDataDto;
 import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.domain.tourspot.entity.TourSpotAssociated;
 import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
-import com.opendata.global.commoncode.entity.CommonCode;
+
+import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -22,11 +23,11 @@ public interface FutureCongestionMapper extends TourSpotBaseMapper<CityDataDto.F
     FutureCongestionMapper INSTANCE = Mappers.getMapper(FutureCongestionMapper.class);
 
     default TourSpotFutureCongestion mapWithExtra(
-            CityDataDto.FutureData dto, TourSpot tourSpot, CommonCode code) {
+            CityDataDto.FutureData dto, TourSpot tourSpot, CongestionLevel level) {
 
         TourSpotFutureCongestion entity = toEntity(dto);
         entity.assignTourSpot(tourSpot);
-        entity.assignCongestion(code);
+        entity.assignCongestion(level);
         return entity;
     }
 
