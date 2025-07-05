@@ -1,14 +1,13 @@
 package com.opendata.global.response.status;
 
-import com.opendata.global.response.BaseErrorCode;
-import com.opendata.global.response.ErrorInfoDto;
+import com.opendata.global.response.BaseStatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorStatus implements BaseErrorCode {
+public enum ErrorStatus implements BaseStatusCode {
     // 일반 응답
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_500", "서버 에러, 관리자에게 문의 바랍니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_400", "잘못된 요청입니다."),
@@ -28,14 +27,4 @@ public enum ErrorStatus implements BaseErrorCode {
     private final String code;
     private final String message;
 
-
-    @Override
-    public ErrorInfoDto getReasonHttpStatus() {
-        return ErrorInfoDto.builder()
-                .kind("Failure")
-                .message(message)
-                .code(code)
-                .httpStatus(httpStatus)
-                .build();
-    }
 }
