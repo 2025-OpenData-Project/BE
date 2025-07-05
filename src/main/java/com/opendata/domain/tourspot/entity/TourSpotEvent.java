@@ -1,6 +1,5 @@
 package com.opendata.domain.tourspot.entity;
 
-import com.opendata.global.commoncode.entity.CommonCode;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,9 +15,11 @@ public class TourSpotEvent extends TourSpotAssociated {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tourspotEventId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_type_cd")
-    private CommonCode eventTypeCd;
+
+    //TODO: Enum으로 변경 필요
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "event_type_cd")
+//    private CommonCode eventTypeCd;
 
     private String eventNm;
     private String eventPrd;
