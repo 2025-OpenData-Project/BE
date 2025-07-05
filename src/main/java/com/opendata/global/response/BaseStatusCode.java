@@ -1,8 +1,8 @@
-package com.opendata.global.exception;
+package com.opendata.global.response;
 
 import org.springframework.http.HttpStatus;
 
-public interface BaseErrorCode {
+public interface BaseStatusCode {
     HttpStatus getHttpStatus();
     String getCode();
     String getMessage();
