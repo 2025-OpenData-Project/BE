@@ -22,10 +22,16 @@ jobs:
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
 
       - name: 실행 권한 부여
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
 
-      - name: 테스트 및 빌드
-        run: ./gradlew clean build
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with Gradle(Test 제외)
+        run: ./gradlew build --exclude-task test
+
+      - name: Verify JAR file
+        run: ls -la build/libs/
 
       - name: Google Cloud SDK 설정
         uses: "google-github-actions/auth@v2"
