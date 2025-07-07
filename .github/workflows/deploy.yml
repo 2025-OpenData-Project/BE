@@ -55,9 +55,18 @@ jobs:
           script_stop: true
           script: |
             cd /home/${{ secrets.GCE_USERNAME }}
+            
+            # 서비스 계정 키 파일 생성
+            echo '${{ secrets.GCP_SA_KEY }}' > gcp-key.json
+            
+            # gcloud 인증 설정
+            gcloud auth activate-service-account --key-file=gcp-key.json
+            gcloud auth configure-docker us-central1-docker.pkg.dev
+            
+            # 기존 컨테이너 정리
             sudo docker stop opendata || true
             sudo docker rm opendata || true
-
+            
+            # 최신 이미지 풀링 및 실행
             sudo docker pull us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
-
             sudo docker run -d -p 80:8080 --name opendata us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
