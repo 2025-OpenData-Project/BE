@@ -32,7 +32,6 @@ jobs:
       - name: Verify JAR file
         run: ls -la build/libs/*.jar
 
-
       - name: Google Cloud SDK 설정
         uses: "google-github-actions/auth@v2"
         with:
