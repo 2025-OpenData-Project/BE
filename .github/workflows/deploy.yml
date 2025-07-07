@@ -63,3 +63,4 @@ jobs:
             sudo docker pull us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
 
             sudo docker run -d -p 80:8080 --name opendata-app us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
+
