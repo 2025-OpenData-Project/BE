@@ -38,7 +38,7 @@ jobs:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Docker를 위한 gcloud 인증 설정
-        run: sudo gcloud auth configure-docker us-central1-docker.pkg.dev
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
       - name: Docker 이미지 생성 및 태그 설정
         run: docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest .
@@ -57,7 +57,6 @@ jobs:
             cd /home/${{ secrets.GCE_USERNAME }}
             sudo docker stop opendata || true
             sudo docker rm opendata || true
-
             sudo docker pull us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
 
             sudo docker run -d -p 80:8080 --name opendata us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-image/opendata:latest
