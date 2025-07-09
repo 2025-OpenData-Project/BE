@@ -1,10 +1,12 @@
 package com.opendata.domain.course.controller;
 
 
+import com.opendata.domain.course.dto.response.CourseComponentResponse;
 import com.opendata.domain.course.dto.response.CourseLikeRequest;
 import com.opendata.domain.course.dto.response.CourseResultResponse;
 import com.opendata.domain.course.dto.response.CourseSpecResponse;
 import com.opendata.domain.course.entity.Course;
+import com.opendata.domain.course.entity.CourseComponent;
 import com.opendata.domain.course.service.CourseService;
 
 import com.opendata.global.response.ApiResponse;
@@ -23,8 +25,8 @@ import java.util.List;
 public class CourseController {
     private final CourseService courseService;
 
-    @GetMapping("/get")
-    public ResponseEntity<ApiResponse<CourseResultResponse>> findCourses(
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<List<CourseComponentResponse>>>> findCourses(
             //@AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam double lat,
             @RequestParam double lon,
@@ -36,15 +38,15 @@ public class CourseController {
                 courseService.recommendCourses(lat, lon, startTime, endTime, tourspot)));
     }
 
-    @PostMapping("/like")
-    public ResponseEntity<ApiResponse<Course>> postCourseLike(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody CourseLikeRequest request){
-        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.likeCourse(customUserDetails, request)));
-    }
-
-    @GetMapping("/spec/{courseId}")
-    public ResponseEntity<ApiResponse<CourseSpecResponse>> getCourseSpec(@PathVariable Long courseId){
-        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.findCourseSpec(courseId)));
-    }
+//    @PostMapping("/like")
+//    public ResponseEntity<ApiResponse<Course>> postCourseLike(
+//            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+//            @RequestBody CourseLikeRequest request){
+//        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.likeCourse(customUserDetails, request)));
+//    }
+//
+//    @GetMapping("/spec/{courseId}")
+//    public ResponseEntity<ApiResponse<CourseSpecResponse>> getCourseSpec(@PathVariable Long courseId){
+//        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.findCourseSpec(courseId)));
+//    }
 }
