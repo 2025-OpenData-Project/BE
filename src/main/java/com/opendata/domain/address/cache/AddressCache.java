@@ -6,8 +6,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,8 +20,8 @@ public class AddressCache {
 
     @PostConstruct
     public void init() {
-        cache = addressRepository.findAll().stream()
-                .collect(Collectors.toMap(Address::getAddressKorNm, Function.identity()));
+        cache = new ConcurrentHashMap<>(addressRepository.findAll().stream()
+                .collect(Collectors.toMap(Address::getAddressKorNm, Function.identity())));
     }
 
     public Address getByKorName(String name) {
