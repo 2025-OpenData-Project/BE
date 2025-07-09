@@ -1,11 +1,11 @@
 package com.opendata.domain.course.entity;
 
-import com.opendata.domain.tourspot.dto.AreaComponentDto;
 import com.opendata.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "course")
@@ -21,6 +21,13 @@ public class Course extends BaseEntity {
 //    @OneToMany(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id")
     //private User userId;
+
+
+//    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<CourseComponent> courseComponents;
+
+    private LocalDateTime startDtm;
+    private LocalDateTime endDtm;
 
     @Builder.Default
     private boolean isLike = false;
