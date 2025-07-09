@@ -4,13 +4,11 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
 import com.opendata.domain.tourspot.dto.CityDataDto;
 import com.opendata.domain.tourspot.entity.TourSpot;
-import com.opendata.domain.tourspot.entity.TourSpotAssociated;
 import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
 
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
-import org.mapstruct.AfterMapping;
+
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
