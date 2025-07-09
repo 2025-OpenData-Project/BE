@@ -71,7 +71,7 @@ public class CourseService {
                                 LocalDateTime.parse(f.getFcstTime(), formatter)
                         ))
                 )
-                .filter(a -> CourseUtil.calculateDistance(userLat, userLon, a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongtitude()) <= 30.0)
+                .filter(a -> CourseUtil.calculateDistance(userLat, userLon, a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongitude()) <= 30.0)
                 .toList();
 
 
@@ -90,7 +90,7 @@ public class CourseService {
         course.add(courseMapper.toEntity(current));
 
         double dx = startArea.tourSpot().getAddress().getLatitude() - userLat;
-        double dy = startArea.tourSpot().getAddress().getLongtitude() - userLon;
+        double dy = startArea.tourSpot().getAddress().getLongitude() - userLon;
 
         while (course.size() < 5) {
             FilteredTourSpot next = findNextAreaDirectional(current, candidates, visited, currentTime, dx, dy);
@@ -120,7 +120,7 @@ public class CourseService {
     }
 
     private boolean isInDirection(FilteredTourSpot from, FilteredTourSpot to, double dx, double dy) {
-        double vx = to.tourSpot().getAddress().getLongtitude() - from.tourSpot().getAddress().getLongtitude();
+        double vx = to.tourSpot().getAddress().getLongitude() - from.tourSpot().getAddress().getLongitude();
         double vy = to.tourSpot().getAddress().getLatitude() - from.tourSpot().getAddress().getLatitude(); // 이 부분 수정
 
         return (vx * dx + vy * dy) > 0;
@@ -139,8 +139,8 @@ public class CourseService {
                         log.debug("currentTime 시간 불일치: {}", currentTime);
                     } else {
                         double distance = CourseUtil.calculateDistance(
-                                from.tourSpot().getAddress().getLatitude(), from.tourSpot().getAddress().getLongtitude(),
-                                a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongtitude()
+                                from.tourSpot().getAddress().getLatitude(), from.tourSpot().getAddress().getLongitude(),
+                                a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongitude()
                         );
                         if (distance > 30.0) {
                             log.debug("거리 초과: {} km, 장소: {}", distance, a.tourSpot().getTourspotNm());
@@ -154,13 +154,13 @@ public class CourseService {
                 .filter(a -> !visited.contains(a.tourSpot()))
                 .filter(a -> a.tourspotTm().isEqual(currentTime.plusHours(1)))
                 .filter(a -> CourseUtil.calculateDistance(
-                        from.tourSpot().getAddress().getLatitude(), from.tourSpot().getAddress().getLongtitude(),
-                        a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongtitude()
+                        from.tourSpot().getAddress().getLatitude(), from.tourSpot().getAddress().getLongitude(),
+                        a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongitude()
                 ) <= 30.0)
                 .filter(a -> isInDirection(from, a, dx, dy))
                 .min(Comparator.comparingDouble(a -> CourseUtil.calculateDistance(
-                        from.tourSpot().getAddress().getLatitude(), from.tourSpot().getAddress().getLongtitude(),
-                        a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongtitude()
+                        from.tourSpot().getAddress().getLatitude(), from.tourSpot().getAddress().getLongitude(),
+                        a.tourSpot().getAddress().getLatitude(), a.tourSpot().getAddress().getLongitude()
                 )))
                 .orElse(null);
     }
