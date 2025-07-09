@@ -74,7 +74,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/oauth2/**","/register/*","/login", "/swagger-ui/**",    // Swagger UI 관련 경로
-                                "/v3/api-docs/**","/api/area").permitAll()
+                                "/v3/api-docs/**","/api/area", "/course").permitAll()
                         .anyRequest().authenticated()
                 );
         http
