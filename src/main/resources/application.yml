@@ -35,5 +35,8 @@ logging:
   level:
     root: INFO
     org.springframework.security: DEBUG
+    com.opendata: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 api_secret: 65727076703838343130386d59744e75
