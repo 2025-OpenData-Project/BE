@@ -4,18 +4,20 @@ import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Table(name = "tourspot_future_congestion")
+@DynamicUpdate
 @Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TourSpotFutureCongestion extends TourSpotAssociated {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long realTimeCongestionId;
+    private Long futureCongestionId;
 
     private String fcstTime;
 
@@ -25,4 +27,5 @@ public class TourSpotFutureCongestion extends TourSpotAssociated {
     public void assignCongestion(CongestionLevel level){
         this.congestionLvl = level;
     }
+
 }
