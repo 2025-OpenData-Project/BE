@@ -1,6 +1,9 @@
 package com.opendata.domain.tourspot.service;
 
 
+import com.opendata.domain.address.cache.AddressCache;
+import com.opendata.domain.address.entity.Address;
+import com.opendata.domain.address.repository.AddressRepository;
 import com.opendata.domain.tourspot.api.AreaApi;
 import com.opendata.domain.tourspot.dto.CityDataDto;
 
@@ -13,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +30,12 @@ public class TourSpotService
 {
     private final CityDataService cityDataService;
     private final TourSpotRepository tourSpotRepository;
+    private final AddressCache addressCache;
+
     private final FutureCongestionMapper mapper;
 
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
         List<CompletableFuture<CityDataDto>> futures = areaNames.stream()
@@ -41,6 +48,8 @@ public class TourSpotService
                 .map(this::convertToEntity)
                 .filter(Objects::nonNull)
                 .toList();
+
+
         tourSpotRepository.saveAll(areaList);
 
     }
@@ -57,8 +66,10 @@ public class TourSpotService
 
         String congestLevel = livePopulationStatuses.get(0).getAreaCongestLvl();
 
+        Address address = addressCache.getByKorName(cityDataDto.getCitydata().getAreaName());
 
-        TourSpot tourSpot = TourSpot.create(cityDataDto.getCitydata().getAreaName());
+        TourSpot tourSpot = TourSpot.create(address, cityDataDto.getCitydata().getAreaName(), CongestionLevel.resolve(congestLevel));
+
         List<TourSpotFutureCongestion> futureCongestions = new ArrayList<>();
 
         livePopulationStatuses.forEach(status -> {
@@ -68,6 +79,7 @@ public class TourSpotService
                 futureCongestions.add(congestion);
             });
         });
+
 
         tourSpot.addSubEntities(futureCongestions);
 

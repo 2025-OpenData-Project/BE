@@ -19,9 +19,9 @@ public class CourseComponent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "course_id")
+//    private Course course;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

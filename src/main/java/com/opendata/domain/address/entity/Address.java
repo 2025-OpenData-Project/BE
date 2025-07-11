@@ -1,0 +1,36 @@
+package com.opendata.domain.address.entity;
+
+import com.opendata.global.entity.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
+
+
+
+@Entity
+@Table(name = "address")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+public class Address extends BaseEntity {
+
+    @Id
+    @Column(name = "address_id", nullable = false)
+    private Long addressId;
+
+    @ManyToOne
+    @JoinColumn(name = "area_id", nullable = false)
+    private Area area;
+
+    @Column(name = "address_kor_nm")
+    private String addressKorNm;
+
+    @Column(name = "address_eng_nm")
+    private String addressEngNm;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+}
