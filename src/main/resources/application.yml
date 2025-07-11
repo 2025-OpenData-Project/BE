@@ -8,10 +8,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update  # 또는 validate, none 등
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
 
 
 
