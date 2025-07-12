@@ -8,25 +8,25 @@ import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
 
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(
         componentModel = SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-public interface FutureCongestionMapper extends TourSpotBaseMapper<CityDataDto.FutureData, TourSpotFutureCongestion> {
+public interface FutureCongestionMapper {
 
     FutureCongestionMapper INSTANCE = Mappers.getMapper(FutureCongestionMapper.class);
 
-    default TourSpotFutureCongestion mapWithExtra(
-            CityDataDto.FutureData dto, TourSpot tourSpot, CongestionLevel level) {
+    TourSpotFutureCongestion toTourSpotFutureCongestion(CityDataDto.FutureData dto, @Context TourSpot tourSpot, CongestionLevel level);
 
-        TourSpotFutureCongestion entity = toEntity(dto);
+    @AfterMapping
+    default void afterToEntity(
+            @MappingTarget TourSpotFutureCongestion entity,
+            @Context TourSpot tourSpot
+    ) {
+
         entity.assignTourSpot(tourSpot);
-        entity.assignCongestion(level);
-        return entity;
     }
-
 }

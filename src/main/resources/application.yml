@@ -8,10 +8,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update  # 또는 validate, none 등
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
 
 
 
@@ -30,13 +30,13 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 1024 # 1KB ??? ??? ?? ??
 
-
-logging:
-  level:
-    root: INFO
-    org.springframework.security: DEBUG
-    com.opendata: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+#
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework.security: DEBUG
+#    com.opendata: DEBUG
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 api_secret: 65727076703838343130386d59744e75

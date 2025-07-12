@@ -21,7 +21,7 @@ public class AddressCache {
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>(addressRepository.findAll().stream()
-                .collect(Collectors.toMap(Address::getAddressKorNm, Function.identity())));
+                .collect(Collectors.toUnmodifiableMap(Address::getAddressKorNm, Function.identity())));
     }
 
     public Address getByKorName(String name) {
