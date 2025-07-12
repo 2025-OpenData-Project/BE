@@ -3,6 +3,7 @@ package com.opendata.domain.tourspot.service;
 
 import com.opendata.domain.address.cache.AddressCache;
 import com.opendata.domain.address.entity.Address;
+import com.opendata.domain.address.repository.AddressRepository;
 import com.opendata.domain.tourspot.api.AreaApi;
 import com.opendata.domain.tourspot.dto.CityDataDto;
 
@@ -14,6 +15,8 @@ import com.opendata.domain.tourspot.mapper.CurrentCongestionMapper;
 import com.opendata.domain.tourspot.mapper.FutureCongestionMapper;
 import com.opendata.domain.tourspot.repository.FutureCongestionRepository;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
+import com.opendata.global.response.exception.GlobalException;
+import com.opendata.global.response.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -119,6 +122,27 @@ public class TourSpotService
 
         return tourSpot;
     }
+//    Address_id
+//            Category
+//    tourspot_id
+//            tourspot_nm
+    @Transactional
+    public void fetchAllOrganTourSpotAndSave()
+    {
+        List<Address> addressList = addressCache.getAll();
+        if(addressList.isEmpty()){
+            throw new GlobalException(ErrorStatus.ADDRESS_NOT_FOUND);
+        }
+        List<TourSpot> tourSpotList =new ArrayList<>();
+        for(Address address : addressList){
+            TourSpot tourSpot = tourSpotRepository.findByName(address.getAddressKorNm())
+                    .orElseGet(() -> TourSpot.create(address, address.getAddressKorNm()));
+            tourSpotList.add(tourSpot);
+        }
+        tourSpotRepository.saveAll(tourSpotList);
+    }
+
+
 //    public List<AreaCongestionDto> mapToClosestTimeList(List<TourSpot> areas, String currentTime) {
 //        return areas.stream()
 //                .map(area -> area.getFutures().stream()
