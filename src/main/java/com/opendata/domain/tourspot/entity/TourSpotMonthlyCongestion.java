@@ -1,5 +1,6 @@
 package com.opendata.domain.tourspot.entity;
 
+import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-// TODO: OPEN API 응답 참고하여 리팩터링 필요.
 @Entity
 @Table(name = "tourspot_monthly_congestion")
 @Getter
@@ -19,5 +19,8 @@ public class TourSpotMonthlyCongestion extends TourSpotAssociated {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long monthlyCongestionId;
 
-    private Integer congestionLvl;
+    private String date;
+
+    @Enumerated(EnumType.STRING)
+    private CongestionLevel congestionLvl;
 }
