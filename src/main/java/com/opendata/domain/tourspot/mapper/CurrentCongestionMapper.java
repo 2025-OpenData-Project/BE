@@ -30,5 +30,6 @@ public interface CurrentCongestionMapper {
             @Context TourSpot tourSpot
     ) {
         entity.assignTourSpot(tourSpot);
+        tourSpot.addCurrentCongestion(entity);
     }
 }
