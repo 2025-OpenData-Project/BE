@@ -6,7 +6,7 @@ import lombok.*;
 @Entity
 @Table(name = "tourspot_event")
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourSpotEvent extends TourSpotAssociated {
@@ -15,17 +15,11 @@ public class TourSpotEvent extends TourSpotAssociated {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tourspotEventId;
 
-
-    //TODO: Enum으로 변경 필요
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "event_type_cd")
-//    private CommonCode eventTypeCd;
-
-    private String eventNm;
-    private String eventPrd;
-    private String eventPlce;
-    private Double eventLat;
-    private Double eventLon;
-    private String tourspotThmb;
+    private String eventName;
+    private String eventPeriod;
+    private String eventPlace;
+    private Double eventX;
+    private Double eventY;
+    private String tourspotThumbnail;
     private String tourspotUrl;
 }
