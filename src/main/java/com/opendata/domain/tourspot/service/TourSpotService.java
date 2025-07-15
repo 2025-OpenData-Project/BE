@@ -197,7 +197,7 @@ public class TourSpotService
 
     }
 
-    public List<TourSpotMonthlyCongestion> convertMonthlyDtoToEntities(MonthlyCongestionDto monthlyCongestionDto, TourSpot tourSpot )
+    private List<TourSpotMonthlyCongestion> convertMonthlyDtoToEntities(MonthlyCongestionDto monthlyCongestionDto, TourSpot tourSpot )
     {
         if (monthlyCongestionDto == null || tourSpot == null) {
             return List.of();
