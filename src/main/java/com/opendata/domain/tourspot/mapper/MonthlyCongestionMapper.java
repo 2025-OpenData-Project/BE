@@ -19,7 +19,7 @@ public interface MonthlyCongestionMapper {
     FutureCongestionMapper INSTANCE = Mappers.getMapper(FutureCongestionMapper.class);
 
 
-    @Mapping(target = "date", source = "baseYmd")
+    @Mapping(target = "baseYmd", source = "baseYmd")
     @Mapping(target = "congestionLvl", expression = "java(CongestionLevel.fromRate(dto.getCnctrRate()))")
     TourSpotMonthlyCongestion toMonthlyCongestion(
             MonthlyCongestionDto.AddressItem dto,
@@ -29,6 +29,6 @@ public interface MonthlyCongestionMapper {
     @AfterMapping
     default void assignTourSpot(@MappingTarget TourSpotMonthlyCongestion entity,
                                 @Context TourSpot tourSpot) {
-
+        entity.assignTourSpot(tourSpot);
     }
 }
