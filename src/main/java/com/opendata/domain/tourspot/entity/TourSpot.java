@@ -63,12 +63,22 @@ public class TourSpot extends BaseEntity {
         newOnes.forEach(this::addFutureCongestion);
     }
 
+    public void updateMonthlyCongestions(List<TourSpotMonthlyCongestion> newOnes) {
+        this.monthlyCongestions.clear();
+        newOnes.forEach(this::addMonthlyCongestion);
+    }
+
+
     public void addFutureCongestion(TourSpotFutureCongestion congestion) {
         this.futureCongestions.add(congestion);
     }
 
     public void addCurrentCongestion(TourSpotCurrentCongestion congestion) {
         this.currentCongestions.add(congestion);
+    }
+
+    public void addMonthlyCongestion(TourSpotMonthlyCongestion congestion) {
+        this.monthlyCongestions.add(congestion);
     }
 
 }
