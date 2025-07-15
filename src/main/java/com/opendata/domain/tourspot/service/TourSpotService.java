@@ -149,6 +149,7 @@ public class TourSpotService
         tourSpotRepository.saveAll(tourSpotList);
     }
 
+    @Transactional
     public void updateMonthlyCongestion()
     {
         //캐시에서 어드레스 뽑아오깅
