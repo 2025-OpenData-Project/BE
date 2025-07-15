@@ -57,12 +57,6 @@ public class TourSpot extends BaseEntity {
         return new TourSpot(address, tourspotNm);
     }
 
-
-    public void updateFutureCongestions(List<TourSpotFutureCongestion> newOnes) {
-        this.futureCongestions.clear();
-        newOnes.forEach(this::addFutureCongestion);
-    }
-
     public void addFutureCongestion(TourSpotFutureCongestion congestion) {
         this.futureCongestions.add(congestion);
     }
@@ -70,5 +64,7 @@ public class TourSpot extends BaseEntity {
     public void addCurrentCongestion(TourSpotCurrentCongestion congestion) {
         this.currentCongestions.add(congestion);
     }
+
+    public void addEvent(TourSpotEvent event) { this.events.add(event); }
 
 }
