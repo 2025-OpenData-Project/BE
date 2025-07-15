@@ -2,16 +2,14 @@ package com.opendata.domain.tourspot.entity;
 
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Entity
 @Table(name = "tourspot_monthly_congestion")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TourSpotMonthlyCongestion extends TourSpotAssociated {
 
@@ -19,7 +17,7 @@ public class TourSpotMonthlyCongestion extends TourSpotAssociated {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long monthlyCongestionId;
 
-    private String date;
+    private String baseYmd;
 
     @Enumerated(EnumType.STRING)
     private CongestionLevel congestionLvl;
