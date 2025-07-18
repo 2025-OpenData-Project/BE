@@ -21,15 +21,8 @@ import static com.opendata.domain.tourspot.api.AreaApi.AreaEndPoint.BASE_URL;
 @RequiredArgsConstructor
 public class CityDataService
 {
-    private final WebClient webClient = WebClient.builder()
-            .baseUrl(BASE_URL)
-            .exchangeStrategies(ExchangeStrategies.builder()
-                    .codecs(config -> config
-                            .defaultCodecs()
-                            .maxInMemorySize(1024 * 1024)) // 1MB 제한
-                    .build())
-            .build();
-    @Value("${api_secret}")
+    private final WebClient webClient;
+    @Value("${api.seoul_city_data_key}")
     private String secretKey;
 
 
