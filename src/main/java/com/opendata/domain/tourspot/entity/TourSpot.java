@@ -48,6 +48,10 @@ public class TourSpot extends BaseEntity {
     @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourSpotMonthlyCongestion> monthlyCongestions;
 
+    @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourSpotRelated> relatedSpots;
+
+
     protected TourSpot(Address address, String tourspotNm){
         this.address = address;
         this.tourspotNm = tourspotNm;
@@ -67,6 +71,10 @@ public class TourSpot extends BaseEntity {
         this.monthlyCongestions.clear();
         newOnes.forEach(this::addMonthlyCongestion);
     }
+    public void updateTourSpotRelated(List<TourSpotRelated> newOnes) {
+        this.relatedSpots.clear();
+        newOnes.forEach(this::addRelatedSpots);
+    }
 
 
     public void addFutureCongestion(TourSpotFutureCongestion congestion) {
@@ -79,6 +87,10 @@ public class TourSpot extends BaseEntity {
 
     public void addMonthlyCongestion(TourSpotMonthlyCongestion congestion) {
         this.monthlyCongestions.add(congestion);
+    }
+
+    public void addRelatedSpots(TourSpotRelated newOnes) {
+        this.relatedSpots.add(newOnes);
     }
 
 }
