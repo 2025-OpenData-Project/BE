@@ -57,6 +57,17 @@ public class TourSpot extends BaseEntity {
         return new TourSpot(address, tourspotNm);
     }
 
+
+    public void addMonthlyCongestion(TourSpotMonthlyCongestion congestion) {
+        this.monthlyCongestions.add(congestion);
+    }
+
+
+    public void updateMonthlyCongestions(List<TourSpotMonthlyCongestion> newOnes) {
+        this.monthlyCongestions.clear();
+        newOnes.forEach(this::addMonthlyCongestion);
+    }
+
     public void addFutureCongestion(TourSpotFutureCongestion congestion) {
         this.futureCongestions.add(congestion);
     }
