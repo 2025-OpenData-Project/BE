@@ -29,13 +29,6 @@ public enum CongestionLevel {
         }
         return level;
     }
-    public static CongestionLevel fromRate(double rate) {
-        if (rate>=0 && rate < 31) return RELAXED;
-        else if (rate>=31 && rate < 71) return NORMAL;
-        else if (rate>=71 && rate < 96) return SLIGHTLY_BUSY;
-        else return BUSY;
-    }
-
 
     private boolean isCourseComponent(){
         return this == RELAXED || this == NORMAL;

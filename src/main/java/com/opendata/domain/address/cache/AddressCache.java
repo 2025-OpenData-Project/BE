@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -29,9 +27,4 @@ public class AddressCache {
     public Address getByKorName(String name) {
         return cache.get(name);
     }
-
-    public List<Address> getAll() {
-        return new ArrayList<>(cache.values());
-    }
-
 }

@@ -7,16 +7,16 @@ import com.opendata.domain.tourspot.api.AreaApi;
 import com.opendata.domain.tourspot.dto.CityDataDto;
 
 import com.opendata.domain.tourspot.dto.MonthlyCongestionDto;
-import com.opendata.domain.tourspot.entity.TourSpot;
-import com.opendata.domain.tourspot.entity.TourSpotCurrentCongestion;
-import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
-import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
+import com.opendata.domain.tourspot.entity.*;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
+import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 import com.opendata.domain.tourspot.mapper.CurrentCongestionMapper;
 import com.opendata.domain.tourspot.mapper.FutureCongestionMapper;
 import com.opendata.domain.tourspot.mapper.MonthlyCongestionMapper;
+import com.opendata.domain.tourspot.mapper.TourSpotEventMapper;
 import com.opendata.domain.tourspot.repository.FutureCongestionRepository;
 import com.opendata.domain.tourspot.repository.MonthlyCongestionRepository;
+import com.opendata.domain.tourspot.repository.TourSpotEventRepository;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
 import com.opendata.global.response.exception.GlobalException;
 import com.opendata.global.response.status.ErrorStatus;
@@ -32,7 +32,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -44,10 +43,12 @@ public class TourSpotService
 
     private final TourSpotRepository tourSpotRepository;
     private final FutureCongestionRepository futureCongestionRepository;
+    private final TourSpotEventRepository tourSpotEventRepository;
     private final MonthlyCongestionRepository monthlyCongestionRepository;
 
     private final AddressCache addressCache;
 
+    private final TourSpotEventMapper tourSpotEventMapper;
     private final FutureCongestionMapper futureCongestionMapper;
     private final CurrentCongestionMapper currentCongestionMapper;
     private final MonthlyCongestionMapper monthlyCongestionMapper;
@@ -59,7 +60,7 @@ public class TourSpotService
         List<CompletableFuture<CityDataDto>> futures = areaNames.stream()
                 .map(cityDataService::fetchCityData)
                 .toList();
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();//끝날때까지 기다리기
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
         List<TourSpot> areaList = futures.stream()
                 .map(CompletableFuture::join)
@@ -81,7 +82,7 @@ public class TourSpotService
         var data = cityDataDto.getCitydata();
 
         List<CityDataDto.LivePopulationStatus> livePopulationStatuses = data.getLivePopulationStatuses();
-        //List<CityDataDto.EventData> eventDataList = data.getEventDataList();
+        List<CityDataDto.EventData> eventDataList = data.getEventDataList();
 
 
 
@@ -97,14 +98,15 @@ public class TourSpotService
             tourSpotRepository.save(tourSpot);
         }
 
+        insertTourSpotEvents(eventDataList, tourSpot);
+
         List<TourSpotFutureCongestion> futureCongestions = new ArrayList<>();
 
 
         livePopulationStatuses.forEach(status -> {
             if (!status.getFCstPpltn().isEmpty()) {
                 String curTime = status.getFCstPpltn().get(0).getFcstTime();
-                TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionMapper.toEntity(status, curTime, tourSpot);
-                tourSpot.addCurrentCongestion(tourSpotCurrentCongestion);
+                currentCongestionMapper.toEntity(status, curTime, tourSpot);
             }
 
             status.getFCstPpltn().forEach(futureData -> {
@@ -120,19 +122,23 @@ public class TourSpotService
                     existing.get().assignCongestion(congestionLevel);
                     futureCongestions.add(existing.get());
                 } else {
-                    TourSpotFutureCongestion congestion = futureCongestionMapper.toTourSpotFutureCongestion(futureData, tourSpot, congestionLevel);
-                    futureCongestions.add(congestion);
+                    futureCongestionMapper.toTourSpotFutureCongestion(futureData, tourSpot, congestionLevel);
                 }
 
             });
         });
 
-
-        tourSpot.updateFutureCongestions(futureCongestions);
-
-
         return tourSpot;
     }
+
+    private void insertTourSpotEvents(List<CityDataDto.EventData> eventDataList, TourSpot tourSpot) {
+        eventDataList.forEach(eventData -> {
+            if (!tourSpotEventRepository.existsByEventNameAndEventPeriod(eventData.getEventName(), eventData.getEventPeriod())){
+                tourSpotEventMapper.toTourSpotEvent(eventData, tourSpot);
+            }
+        });
+    }
+
     @Transactional
     public void fetchAllOrganTourSpotAndSave()
     {
@@ -218,9 +224,6 @@ public class TourSpotService
                 .map(list -> list.get(0).getTAtsNm())
                 .orElse(null);
     }
-
-
-
 //    public List<AreaCongestionDto> mapToClosestTimeList(List<TourSpot> areas, String currentTime) {
 //        return areas.stream()
 //                .map(area -> area.getFutures().stream()
