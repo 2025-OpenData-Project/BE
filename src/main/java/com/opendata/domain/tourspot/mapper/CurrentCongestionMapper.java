@@ -6,8 +6,6 @@ import com.opendata.domain.tourspot.entity.TourSpotCurrentCongestion;
 
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 import org.mapstruct.*;
-import org.mapstruct.factory.Mappers;
-
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
@@ -18,8 +16,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 )
 
 public interface CurrentCongestionMapper {
-
-    CurrentCongestionMapper INSTANCE = Mappers.getMapper(CurrentCongestionMapper.class);
 
     @Mapping(target = "congestionLvl", expression = "java(CongestionLevel.resolve(dto.getAreaCongestLvl()))")
     TourSpotCurrentCongestion toEntity(CityDataDto.LivePopulationStatus dto, String fcstTime, @Context TourSpot tourSpot);

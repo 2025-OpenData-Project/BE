@@ -4,7 +4,6 @@ import com.opendata.domain.tourspot.dto.CityDataDto;
 import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.domain.tourspot.entity.TourSpotEvent;
 import org.mapstruct.*;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
@@ -12,7 +11,6 @@ import org.mapstruct.factory.Mappers;
 )
 public interface TourSpotEventMapper {
 
-    TourSpotEventMapper INSTANCE = Mappers.getMapper(TourSpotEventMapper.class);
 
     @Mapping(source = "thumbnail", target = "tourspotThumbnail")
     @Mapping(source = "url", target = "tourspotUrl")
