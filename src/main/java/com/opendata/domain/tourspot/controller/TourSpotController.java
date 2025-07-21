@@ -26,6 +26,13 @@ public class TourSpotController
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/organ")
+    public ResponseEntity<List<Void>> getOrganArea()
+    {
+        tourSpotService.fetchAllOrganTourSpotAndSave();
+        return ResponseEntity.ok().build();
+    }
+
 //    @GetMapping("/list")
 //    public ResponseEntity<ApiResponse<List<AreaCongestionDto>>> getAreaListWithCongestion(){
 //        return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.fetchAndConvertAreaCongestionDto()));

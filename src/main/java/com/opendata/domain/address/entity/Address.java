@@ -15,10 +15,10 @@ import lombok.*;
 public class Address extends BaseEntity {
 
     @Id
-    @Column(name = "address_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long addressId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "area_id", nullable = false)
     private Area area;
 
