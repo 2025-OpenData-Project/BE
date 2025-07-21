@@ -1,12 +1,13 @@
 package com.opendata.global.response.status;
 
+import com.opendata.global.response.BaseStatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum SuccessStatus {
+public enum SuccessStatus implements BaseStatusCode {
 
     // 공통 응답
     _OK(HttpStatus.OK, "COMMON_200", "성공입니다.");

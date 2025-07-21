@@ -1,14 +1,13 @@
 package com.opendata.global.response.status;
 
-import com.opendata.global.response.BaseErrorCode;
-import com.opendata.global.response.ErrorInfoDto;
+import com.opendata.global.response.BaseStatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorStatus implements BaseErrorCode {
+public enum ErrorStatus implements BaseStatusCode {
     // 일반 응답
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_500", "서버 에러, 관리자에게 문의 바랍니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_400", "잘못된 요청입니다."),
@@ -22,20 +21,12 @@ public enum ErrorStatus implements BaseErrorCode {
     // USER
     USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "USER_001", "이미 존재하는 사용자이며, 비밀번호가 틀렸습니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER_002", "해당 사용자를 찾을 수 없습니다."),
-    ;
+
+    //주소
+    ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST,"ADDRESS_001","해당 주소가 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
 
-
-    @Override
-    public ErrorInfoDto getReasonHttpStatus() {
-        return ErrorInfoDto.builder()
-                .kind("Failure")
-                .message(message)
-                .code(code)
-                .httpStatus(httpStatus)
-                .build();
-    }
 }

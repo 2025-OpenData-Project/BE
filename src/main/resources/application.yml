@@ -7,7 +7,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update # 또는 validate, none 등
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+
 
 
 jwt:
@@ -25,10 +30,22 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 1024 # 1KB ??? ??? ?? ??
 
+#
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework.security: DEBUG
+#    com.opendata: DEBUG
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
-logging:
-  level:
-    root: INFO
-    org.springframework.security: DEBUG
 
-api_secret: 65727076703838343130386d59744e75
+
+api:
+  seoul_city_data_key: 65727076703838343130386d59744e75
+  tour_api_tourspot_key: C%2BZxoazvjZCUicHi%2BY4x7w4Q1GE9RUKUKiHCkZhYMEdbdqiiHnRV%2F2%2F3%2BhggbEfMSL4R4qgGeSR1BdLrPMmjAw%3D%3D
+  tour_api_congestion_key: B4FraEdNAEHerMG6ZQUi5OXCzio%2FQJ4IRx9rOOz7%2BeiPBh4L8pX4XAygutNaYnOoL%2BD8vS%2F3qZ53efN6daHZ%2Fg%3D%3D
+  zz: wabF%2F2ep3dqrmXQcTNupVTpQXrL3wBuOK1TSRhAo8mwZ9Wqop4GCNUXkqSdf4%2Bwxa1%2FdOCkfmbBXYQL13wlwKQ%3D%3D
+  xx: J28I%2B2X%2FLQ8vHJaw2Yorr492RFOq2%2FRBGCkl1hVMJCu65fNG5xDvDi7GazJpx3ZKa9xb4fYhq14vtXjWSaHrSw%3D%3D
+
+

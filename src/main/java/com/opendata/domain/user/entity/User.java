@@ -1,6 +1,5 @@
 package com.opendata.domain.user.entity;
 
-import com.opendata.domain.register.dto.RegisterRequest;
 import com.opendata.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +7,6 @@ import lombok.*;
 @Entity
 @Table(name = "user")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

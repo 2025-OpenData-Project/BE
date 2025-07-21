@@ -17,19 +17,4 @@ public record AreaComponentDto(
         String time
 ) {
 
-
-    public static AreaComponentDto from(FilteredArea area, String time){
-        return AreaComponentDto.builder()
-                .name(area.name())
-                .category(area.category())
-                .image(area.image())
-                .lat(area.lat())
-                .lon(area.lon())
-                .indoor(area.indoor())
-                .congestion_level(area.congestionLevel())
-                .time(time)
-                .build();
-    }
-
-
 }

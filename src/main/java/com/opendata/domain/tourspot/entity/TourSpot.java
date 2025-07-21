@@ -1,7 +1,9 @@
 package com.opendata.domain.tourspot.entity;
 
+import com.opendata.domain.address.entity.Address;
 import com.opendata.global.entity.BaseEntity;
 import jakarta.persistence.*;
+
 import lombok.*;
 
 
@@ -9,7 +11,9 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "tourspot")
+@Table(name = "tourspot", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueTourSpot", columnNames = {"tourspot_id", "address_id"})
+})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,15 +25,16 @@ public class TourSpot extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tourspotId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "address_id")
-//    private Address address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     private Long tourspotCategoryCd;
     private String tourspotNm;
-    private String tourspotDsrb;
-    private Boolean indoorYn;
 
+    @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourSpotCurrentCongestion> currentCongestions;
 
     @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourSpotImage> images;
@@ -43,15 +48,37 @@ public class TourSpot extends BaseEntity {
     @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourSpotMonthlyCongestion> monthlyCongestions;
 
-    protected TourSpot(String tourspotNm){
+    protected TourSpot(Address address, String tourspotNm){
+        this.address = address;
         this.tourspotNm = tourspotNm;
     }
 
-    public static TourSpot create(String tourspotNm){
-        return new TourSpot(tourspotNm);
+    public static TourSpot create(Address address, String tourspotNm){
+        return new TourSpot(address, tourspotNm);
     }
 
-    public void addSubEntities(List<TourSpotFutureCongestion> futureCongestions){
-        this.futureCongestions = futureCongestions;
+
+    public void updateFutureCongestions(List<TourSpotFutureCongestion> newOnes) {
+        this.futureCongestions.clear();
+        newOnes.forEach(this::addFutureCongestion);
     }
+
+    public void updateMonthlyCongestions(List<TourSpotMonthlyCongestion> newOnes) {
+        this.monthlyCongestions.clear();
+        newOnes.forEach(this::addMonthlyCongestion);
+    }
+
+
+    public void addFutureCongestion(TourSpotFutureCongestion congestion) {
+        this.futureCongestions.add(congestion);
+    }
+
+    public void addCurrentCongestion(TourSpotCurrentCongestion congestion) {
+        this.currentCongestions.add(congestion);
+    }
+
+    public void addMonthlyCongestion(TourSpotMonthlyCongestion congestion) {
+        this.monthlyCongestions.add(congestion);
+    }
+
 }
