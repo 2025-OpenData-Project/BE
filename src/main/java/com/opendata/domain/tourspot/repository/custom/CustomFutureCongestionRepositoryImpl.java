@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository;
+package com.opendata.domain.tourspot.repository.custom;
 
 import com.opendata.domain.tourspot.entity.QTourSpotFutureCongestion;
 import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
