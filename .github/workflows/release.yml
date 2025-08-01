@@ -76,18 +76,27 @@ jobs:
 
             sudo docker stop $IMAGE_NAME || true
             sudo docker rm $IMAGE_NAME || true
-
-            echo "${{ secrets.GCP_SA_KEY }}" | sudo docker login -u _json_key --password-stdin https://us-central1-docker.pkg.dev
+  
+              # 서비스 계정 키 파일로 저장
+            echo '${{ secrets.GCP_SA_KEY }}' > gcp_sa_key.json
+  
+            # Docker 인증
+            cat gcp_sa_key.json | sudo docker login -u _json_key --password-stdin https://us-central1-docker.pkg.dev
+  
+            # 이미지 pull 후 컨테이너 실행
             sudo docker pull us-central1-docker.pkg.dev/$GCP_PROJECT_ID/docker/$IMAGE_NAME:$IMAGE_TAG
-
+  
             sudo docker run -d \
-              --name $IMAGE_NAME \
-              --network app-network \
-              -p 8080:8080 \
-              -e MYSQL_HOST=${{ secrets.MYSQL_HOST }} \
-              -e MYSQL_DB=${{ secrets.MYSQL_DB }} \
-              -e MYSQL_USER=${{ secrets.MYSQL_USER }} \
-              -e MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
-              -e SEOUL_CITY_DATA_KEY=${{ secrets.SEOUL_CITY_DATA_KEY }} \
-              -e TOUR_API_TOURSPOT_KEY=${{ secrets.TOUR_API_TOURSPOT_KEY }} \
-              us-central1-docker.pkg.dev/$GCP_PROJECT_ID/docker/$IMAGE_NAME:$IMAGE_TAG
+            --name $IMAGE_NAME \
+            --network app-network \
+            -p 8080:8080 \
+            -e MYSQL_HOST=${{ secrets.MYSQL_HOST }} \
+            -e MYSQL_DB=${{ secrets.MYSQL_DB }} \
+            -e MYSQL_USER=${{ secrets.MYSQL_USER }} \
+            -e MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
+            -e SEOUL_CITY_DATA_KEY=${{ secrets.SEOUL_CITY_DATA_KEY }} \
+            -e TOUR_API_TOURSPOT_KEY=${{ secrets.TOUR_API_TOURSPOT_KEY }} \
+            us-central1-docker.pkg.dev/$GCP_PROJECT_ID/docker/$IMAGE_NAME:$IMAGE_TAG
+  
+            # 임시 키 파일 삭제
+            rm -f gcp_sa_key.json
