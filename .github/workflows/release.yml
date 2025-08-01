@@ -96,6 +96,8 @@ jobs:
             -e MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
             -e SEOUL_CITY_DATA_KEY=${{ secrets.SEOUL_CITY_DATA_KEY }} \
             -e TOUR_API_TOURSPOT_KEY=${{ secrets.TOUR_API_TOURSPOT_KEY }} \
+            -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+            -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
             us-central1-docker.pkg.dev/$GCP_PROJECT_ID/docker/$IMAGE_NAME:$IMAGE_TAG
   
             # 임시 키 파일 삭제
