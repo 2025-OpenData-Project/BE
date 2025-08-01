@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class CustomUserDetailsService implements UserDetailsService{
 
