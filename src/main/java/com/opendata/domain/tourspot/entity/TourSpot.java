@@ -30,7 +30,6 @@ public class TourSpot extends BaseEntity {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    private Long tourspotCategoryCd;
     private String tourspotNm;
 
     @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
