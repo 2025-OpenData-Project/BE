@@ -1,6 +1,8 @@
 package com.opendata.global.config;
 
 
+import com.opendata.domain.oauth2.handler.CustomSuccessHandler;
+import com.opendata.domain.oauth2.service.CustomOAuth2UserService;
 import com.opendata.domain.user.repository.UserRepository;
 import com.opendata.global.jwt.CookieUtil;
 import com.opendata.global.jwt.JwtFilter;
@@ -20,6 +22,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -41,6 +44,8 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final CookieUtil cookieUtil;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomSuccessHandler customSuccessHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -64,22 +69,30 @@ public class SecurityConfig {
         //FormLogin, BasicHttp 비활성화
         http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
+
         http
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Unauthorized request\"}");
-                        })
-                )
+//                .exceptionHandling(exceptionHandling -> exceptionHandling
+//                        .authenticationEntryPoint((request, response, authException) -> {
+//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                            response.setContentType("application/json");
+//                            response.getWriter().write("{\"error\": \"Unauthorized request\"}");
+//                        })
+//                )
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/oauth2/**","/register/*","/login", "/swagger-ui/**",    // Swagger UI 관련 경로
-                                "/v3/api-docs/**","/api/area", "/course").permitAll()
+                        .requestMatchers("/oauth2/**","/register/*","/login/oauth2/**", "/swagger-ui/**",    // Swagger UI 관련 경로
+                                "/v3/api-docs/**","/api/area", "/course","/","/login").permitAll()
                         .anyRequest().authenticated()
+                )
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                .userService(customOAuth2UserService))
+                        .successHandler(customSuccessHandler)
                 );
+
         http
-                .addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, cookieUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JwtFilter(jwtUtil,userDetailsService), OAuth2LoginAuthenticationFilter.class);
+//                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, cookieUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         http.sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
