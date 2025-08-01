@@ -1,7 +1,9 @@
 package com.opendata.global.config;
 
 
+
 import com.opendata.domain.oauth2.handler.CustomSuccessHandler;
+import com.opendata.domain.oauth2.repository.OAuth2CookieAuthorizationRequestRepository;
 import com.opendata.domain.oauth2.service.CustomOAuth2UserService;
 import com.opendata.domain.user.repository.UserRepository;
 import com.opendata.global.jwt.CookieUtil;
@@ -22,6 +24,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -46,6 +49,8 @@ public class SecurityConfig {
     private final CookieUtil cookieUtil;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final OAuth2CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -91,6 +96,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login((oauth2) -> oauth2
+                        .authorizationEndpoint(config -> config
+                                .authorizationRequestRepository(cookieAuthorizationRequestRepository) //설정
+                        )
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler)
@@ -98,6 +106,7 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(oAuth2RedirectUriCookieFilter, OAuth2AuthorizationRequestRedirectFilter.class);
 //                .addFilterAfter(new JwtFilter(jwtUtil,userDetailsService), OAuth2LoginAuthenticationFilter.class);
 //                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, cookieUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
