@@ -17,7 +17,7 @@ public class TourSpotFutureCongestion extends TourSpotAssociated {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long futureCongestionId;
+    private Long realTimeCongestionId;
 
     private String fcstTime;
 
