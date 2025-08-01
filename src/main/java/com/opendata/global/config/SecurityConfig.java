@@ -71,13 +71,20 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         http
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                        .authenticationEntryPoint((request, response, authException) -> {
-//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                            response.setContentType("application/json");
-//                            response.getWriter().write("{\"error\": \"Unauthorized request\"}");
-//                        })
-//                )
+                .exceptionHandling(exception -> exception
+                        .defaultAuthenticationEntryPointFor(
+
+                                (req, res, ex) -> {
+                                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                    res.setContentType("application/json");
+                                    res.getWriter().write("{\"error\": \"Unauthorized\"}");
+                                },
+                                new org.springframework.security.web.util.matcher.NegatedRequestMatcher(
+                                        new org.springframework.security.web.util.matcher.AntPathRequestMatcher("/login/**")
+                                )
+                        )
+                )
+
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/oauth2/**","/register/*","/login/oauth2/**", "/swagger-ui/**",    // Swagger UI 관련 경로
                                 "/v3/api-docs/**","/api/area", "/course","/","/login").permitAll()
