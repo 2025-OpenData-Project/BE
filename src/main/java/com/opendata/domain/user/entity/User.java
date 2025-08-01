@@ -14,6 +14,7 @@ public class User extends BaseEntity {
 
     @Id
     @Column(name = "user_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "membership_id", nullable = false)
@@ -22,9 +23,21 @@ public class User extends BaseEntity {
     @Column(name = "user_email")
     private String email;
 
-    @Column(name = "user_pw")
-    private String password;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "user_nickname")
-    private String userNickname;
+    public static User create(String email, String name, Long membershipId) {
+        return User.builder()
+                .email(email)
+                .name(name)
+                .membershipId(membershipId)
+                .build();
+    }
+    public void updateUserInfo(String name) {
+        this.name = name;
+    }
+
+
+
+
 }
