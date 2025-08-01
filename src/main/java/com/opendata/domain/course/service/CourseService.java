@@ -8,7 +8,9 @@ import com.opendata.domain.tourspot.dto.FilteredTourSpot;
 import com.opendata.domain.course.repository.CourseRepository;
 import com.opendata.domain.course.util.CourseUtil;
 import com.opendata.domain.tourspot.entity.TourSpot;
+import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
+import com.opendata.domain.tourspot.repository.FutureCongestionRepository;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
 
 import com.opendata.domain.user.repository.UserRepository;
@@ -30,6 +32,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
     private final TourSpotRepository tourSpotRepository;
+    private final FutureCongestionRepository futureCongestionRepository;
     private final UserRepository userRepository;
 
 
@@ -54,7 +57,18 @@ public class CourseService {
 
         return resultCourses.stream()
                 .map(course -> course.stream()
-                        .map(CourseComponentResponse::from)
+                        .map(component -> {
+                            Long spotId = component.getTourSpot().getTourspotId();
+                            LocalDateTime time = component.getTourspotTm();
+
+                            // 혼잡도 조회
+                            Optional<TourSpotFutureCongestion> congestion =
+                                    futureCongestionRepository.findByTourSpotIdAndFcstTime(spotId, time.format(formatter));
+
+                            CongestionLevel level = congestion.get().getCongestionLvl();;
+
+                            return CourseComponentResponse.from(component, level);
+                        })
                         .toList())
                 .toList();
     }
