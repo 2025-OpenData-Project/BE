@@ -90,8 +90,8 @@ public class SecurityConfig {
                 );
 
         http
-//                .addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new JwtFilter(jwtUtil,userDetailsService), OAuth2LoginAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+//                .addFilterAfter(new JwtFilter(jwtUtil,userDetailsService), OAuth2LoginAuthenticationFilter.class);
 //                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, cookieUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         http.sessionManagement(
