@@ -15,4 +15,14 @@ public class DateUtil {
         LocalDateTime dateTime = LocalDateTime.parse(isoDateTime);
         return dateTime.format(FORMATTER);
     }
+
+    public static LocalDateTime floorToHour(LocalDateTime dateTime) {
+        return dateTime.withMinute(0).withSecond(0).withNano(0);
+    }
+
+    public static String getCurrentFormattedCurrentDateTime() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime floored = floorToHour(now);
+        return floored.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
 }

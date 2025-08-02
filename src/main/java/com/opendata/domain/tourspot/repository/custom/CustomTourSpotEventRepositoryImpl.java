@@ -1,9 +1,13 @@
 package com.opendata.domain.tourspot.repository.custom;
 
 import com.opendata.domain.tourspot.entity.QTourSpotEvent;
+import com.opendata.domain.tourspot.entity.TourSpot;
+import com.opendata.domain.tourspot.entity.TourSpotEvent;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,5 +28,13 @@ public class CustomTourSpotEventRepositoryImpl implements CustomTourSpotEventRep
                 )
                 .fetchFirst();
         return fetchOne != null;
+    }
+
+    @Override
+    public List<TourSpotEvent> findAllByTourSpot(TourSpot tourSpot) {
+        QTourSpotEvent qTourSpotEvent = QTourSpotEvent.tourSpotEvent;
+        return queryFactory.selectFrom(qTourSpotEvent)
+                .where(qTourSpotEvent.tourspot.eq(tourSpot))
+                .fetch();
     }
 }

@@ -16,8 +16,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
         imports = CongestionLevel.class
 )
 public interface MonthlyCongestionMapper {
-    MonthlyCongestionMapper INSTANCE = Mappers.getMapper(MonthlyCongestionMapper.class);
-
 
     @Mapping(target = "baseYmd", source = "baseYmd")
     @Mapping(target = "congestionLvl", expression = "java(CongestionLevel.fromRate(dto.getCnctrRate()))")
