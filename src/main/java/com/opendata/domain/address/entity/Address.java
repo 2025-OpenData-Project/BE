@@ -9,6 +9,7 @@ import lombok.*;
 @Entity
 @Table(name = "address")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
@@ -25,8 +26,8 @@ public class Address extends BaseEntity {
     @Column(name = "address_kor_nm")
     private String addressKorNm;
 
-    @Column(name = "address_eng_nm")
-    private String addressEngNm;
+    @Column(name = "address_detail")
+    private String addressDetail;
 
     @Column(name = "latitude")
     private Double latitude;
