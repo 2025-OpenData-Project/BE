@@ -1,30 +1,26 @@
 package com.opendata.domain.tourspot.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opendata.domain.address.cache.AddressCache;
 import com.opendata.domain.address.entity.Address;
 import com.opendata.domain.tourspot.api.AreaApi;
 import com.opendata.domain.tourspot.dto.CityDataDto;
 
 import com.opendata.domain.tourspot.dto.MonthlyCongestionDto;
+import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
 import com.opendata.domain.tourspot.entity.*;
 import com.opendata.domain.tourspot.dto.TourSpotRelatedDto;
 import com.opendata.domain.tourspot.entity.*;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
-import com.opendata.domain.tourspot.mapper.CurrentCongestionMapper;
-import com.opendata.domain.tourspot.mapper.FutureCongestionMapper;
-import com.opendata.domain.tourspot.mapper.MonthlyCongestionMapper;
-import com.opendata.domain.tourspot.mapper.TourSpotEventMapper;
+import com.opendata.domain.tourspot.mapper.*;
 
-import com.opendata.domain.tourspot.mapper.TourSpotRelatedMapper;
-import com.opendata.domain.tourspot.repository.FutureCongestionRepository;
-import com.opendata.domain.tourspot.repository.MonthlyCongestionRepository;
-import com.opendata.domain.tourspot.repository.TourSpotEventRepository;
-import com.opendata.domain.tourspot.repository.TourSpotRelatedRepository;
-import com.opendata.domain.tourspot.repository.TourSpotRepository;
+import com.opendata.domain.tourspot.repository.*;
 import com.opendata.global.response.exception.GlobalException;
 import com.opendata.global.response.status.ErrorStatus;
+import com.opendata.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,10 +44,12 @@ public class TourSpotService
     private final TourSpotRelatedService tourSpotRelatedService;
 
     private final TourSpotRepository tourSpotRepository;
-    private final FutureCongestionRepository futureCongestionRepository;
     private final TourSpotEventRepository tourSpotEventRepository;
-    private final MonthlyCongestionRepository monthlyCongestionRepository;
     private final TourSpotRelatedRepository tourSpotRelatedRepository;
+    private final TourSpotTagRepository tourSpotTagRepository;
+    private final CurrentCongestionRepository currentCongestionRepository;
+    private final FutureCongestionRepository futureCongestionRepository;
+    private final MonthlyCongestionRepository monthlyCongestionRepository;
 
     private final AddressCache addressCache;
 
@@ -60,6 +58,27 @@ public class TourSpotService
     private final CurrentCongestionMapper currentCongestionMapper;
     private final MonthlyCongestionMapper monthlyCongestionMapper;
     private final TourSpotRelatedMapper tourSpotRelatedMapper;
+    private final TourSpotDetailMapper tourSpotDetailMapper;
+
+    public TourSpotDetailResponse combineTourSpotDetail(Long tourspotId) throws JsonProcessingException {
+        TourSpot tourSpot = tourSpotRepository.findById(tourspotId).orElseThrow();
+        Address address = addressCache.getByKorName(tourSpot.getTourspotNm());
+        TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionRepository.findByTourSpotAndCurTime(tourSpot, "2025-08-01 18:00");
+        List<TourSpotEvent> tourSpotEvents = tourSpotEventRepository.findAllByTourSpot(tourSpot);
+        List<TourSpotTag> tourSpotTags = tourSpotTagRepository.findAllByTourSpot(tourSpot);
+
+        System.out.println(tourSpotCurrentCongestion.getCurrentCongestionId());
+
+        TourSpotDetailResponse t = tourSpotDetailMapper.toResponse(
+                tourSpot,
+                tourSpotDetailMapper.toAddressDto(address),
+                tourSpotCurrentCongestion.getCongestionLvl().getCongestionLabel(),
+                tourSpotDetailMapper.toEventDtos(tourSpotEvents),
+                tourSpotDetailMapper.toTagDtos(tourSpotTags)
+        );
+        System.out.println(new ObjectMapper().writeValueAsString(t));
+        return t;
+    }
 
     //@Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     @Transactional
