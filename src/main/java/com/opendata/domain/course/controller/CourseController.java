@@ -1,6 +1,7 @@
 package com.opendata.domain.course.controller;
 
 
+import com.opendata.docs.CourseControllerDocs;
 import com.opendata.domain.course.dto.response.CourseComponentResponse;
 import com.opendata.domain.course.dto.response.CourseLikeRequest;
 import com.opendata.domain.course.dto.response.CourseResultResponse;
@@ -22,7 +23,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/course")
-public class CourseController {
+public class CourseController implements CourseControllerDocs {
     private final CourseService courseService;
 
     @GetMapping
