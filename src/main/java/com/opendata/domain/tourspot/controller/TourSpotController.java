@@ -1,6 +1,7 @@
 package com.opendata.domain.tourspot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.opendata.docs.TourSpotControllerDocs;
 import com.opendata.domain.tourspot.dto.AreaCongestionDto;
 import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
@@ -18,9 +19,8 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/area")
-public class TourSpotController
-{
+@RequestMapping("/api/tourspot")
+public class TourSpotController implements TourSpotControllerDocs {
     private final TourSpotService tourSpotService;
 
     @GetMapping
