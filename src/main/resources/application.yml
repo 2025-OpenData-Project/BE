@@ -43,6 +43,11 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 1024 # 1KB ??? ??? ?? ??
 
+springdoc:
+  default-produces-media-type: application/json
+  override-with-generic-response: false
+
+
 #
 #logging:
 #  level:
