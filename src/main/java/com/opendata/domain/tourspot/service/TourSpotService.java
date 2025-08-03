@@ -63,7 +63,7 @@ public class TourSpotService
     public TourSpotDetailResponse combineTourSpotDetail(Long tourspotId) throws JsonProcessingException {
         TourSpot tourSpot = tourSpotRepository.findById(tourspotId).orElseThrow();
         Address address = addressCache.getByKorName(tourSpot.getTourspotNm());
-        TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionRepository.findByTourSpotAndCurTime(tourSpot, "2025-08-01 18:00");
+        TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionRepository.findByTourSpotAndCurTime(tourSpot, DateUtil.getCurrentRoundedFormattedDateTime());
         List<TourSpotEvent> tourSpotEvents = tourSpotEventRepository.findAllByTourSpot(tourSpot);
         List<TourSpotTag> tourSpotTags = tourSpotTagRepository.findAllByTourSpot(tourSpot);
 
