@@ -10,10 +10,10 @@ spring:
 
   data:
     redis:
-      host: 35.208.43.78
+      host: ${REDIS_HOST}
       port: 6379
-      username: default
-      password: qkrwlsdud1121!
+      username: ${REDIS_USER}
+      password: ${REDIS_PASSWORD}
       timeout: 6000ms
 
   jpa:
