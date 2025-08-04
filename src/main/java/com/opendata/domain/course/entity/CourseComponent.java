@@ -8,20 +8,20 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "course")
-@Builder
+@Table(name = "course_component")
+@Setter
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class CourseComponent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "course_id")
-//    private Course course;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,4 +31,7 @@ public class CourseComponent {
     @Column(name = "tourspot_tm")
     private LocalDateTime tourspotTm;
 
+    public void assignCourse(Course course){
+        this.course = course;
+    }
 }
