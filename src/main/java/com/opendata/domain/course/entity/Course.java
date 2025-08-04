@@ -1,10 +1,13 @@
 package com.opendata.domain.course.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.opendata.domain.user.entity.User;
 import com.opendata.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -18,15 +21,16 @@ public class Course extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-    //private User userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
-//    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    private List<CourseComponent> courseComponents;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CourseComponent> courseComponents;
 
     private LocalDateTime startDtm;
+
     private LocalDateTime endDtm;
 
     @Builder.Default
@@ -34,4 +38,12 @@ public class Course extends BaseEntity {
 
     @Builder.Default
     private boolean isActive = false;
+
+    public void assignStartDtm(LocalDateTime startDtm){
+        this.startDtm = startDtm;
+    }
+
+    public void assignEndDtm(LocalDateTime endDtm){
+        this.endDtm = endDtm;
+    }
 }
