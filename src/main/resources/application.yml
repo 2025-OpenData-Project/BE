@@ -16,6 +16,10 @@ spring:
       password: ${REDIS_PASSWORD}
       timeout: 6000ms
 
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      write-dates-as-timestamps: false
   jpa:
     hibernate:
       ddl-auto: update # 또는 validate, none 등
