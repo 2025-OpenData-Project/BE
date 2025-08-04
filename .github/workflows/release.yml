@@ -98,6 +98,9 @@ jobs:
             -e TOUR_API_TOURSPOT_KEY=${{ secrets.TOUR_API_TOURSPOT_KEY }} \
             -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
             -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+            -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+            -e REDIS_USERNAME=${{ secrets.REDIS_USERNAME }} \
+            -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
             us-central1-docker.pkg.dev/$GCP_PROJECT_ID/docker/$IMAGE_NAME:$IMAGE_TAG
   
             # 임시 키 파일 삭제
