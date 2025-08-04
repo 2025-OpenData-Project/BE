@@ -1,8 +1,11 @@
 package com.opendata.domain.user.entity;
 
+import com.opendata.domain.course.entity.Course;
 import com.opendata.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -25,6 +28,9 @@ public class User extends BaseEntity {
 
     @Column(name = "name")
     private String name;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Course> courseList;
 
     public static User create(String email, String name, Long membershipId) {
         return User.builder()
