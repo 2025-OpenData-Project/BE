@@ -9,12 +9,13 @@ import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 
 import java.time.LocalDateTime;
 
-public record CourseComponentResponse(String tourspotNm, String congestionLevel,
+public record CourseComponentDto(
+        String tourspotNm, String congestionLevel,
                                       @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                       LocalDateTime time, Double lat, Double lon) {
-    public static CourseComponentResponse from(CourseComponent c, CongestionLevel level) {
+    public static CourseComponentDto from(CourseComponent c, CongestionLevel level) {
         TourSpot tourSpot = c.getTourSpot();
-        return new CourseComponentResponse(tourSpot.getTourspotNm(),level.getCongestionLabel() ,c.getTourspotTm(),
+        return new CourseComponentDto(tourSpot.getTourspotNm(),level.getCongestionLabel() ,c.getTourspotTm(),
                 tourSpot.getAddress().getLatitude(), tourSpot.getAddress().getLongitude());
     }
 }

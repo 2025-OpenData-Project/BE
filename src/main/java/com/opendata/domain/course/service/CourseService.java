@@ -1,6 +1,8 @@
 package com.opendata.domain.course.service;
 
-import com.opendata.domain.course.dto.response.CourseComponentResponse;
+import com.opendata.domain.course.dto.response.CourseComponentDto;
+import com.opendata.domain.course.dto.response.CourseResponse;
+
 import com.opendata.domain.course.entity.CourseComponent;
 import com.opendata.domain.course.mapper.CourseMapper;
 import com.opendata.domain.tourspot.dto.FilteredTourSpot;
@@ -10,6 +12,7 @@ import com.opendata.domain.course.util.CourseUtil;
 import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
+import com.opendata.domain.tourspot.mapper.CourseResponseMapper;
 import com.opendata.domain.tourspot.repository.FutureCongestionRepository;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
 
@@ -18,8 +21,10 @@ import com.opendata.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -34,15 +39,19 @@ public class CourseService {
     private final TourSpotRepository tourSpotRepository;
     private final FutureCongestionRepository futureCongestionRepository;
     private final UserRepository userRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private final CourseResponseMapper courseResponseMapper;
 
 
 
-    public List<List<CourseComponentResponse>> recommendCourses(double userLat, double userLon, String startTime, String endTime, String tourspot) {
+    public List<CourseResponse> recommendCourses(double userLat, double userLon, String startTime, String endTime, String tourspot) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         List<FilteredTourSpot> candidates = getFilteredCandidates(userLat, userLon, startTime, endTime, tourspot, formatter);
-
         List<List<CourseComponent>> resultCourses = new ArrayList<>();
+        List<CourseResponse> courseResponses = new ArrayList<>();
+
         Set<Long> usedAreaIds = new HashSet<>();
 
         for (FilteredTourSpot startArea : candidates) {
@@ -55,22 +64,32 @@ public class CourseService {
             if (resultCourses.size() >= 5) break;
         }
 
-        return resultCourses.stream()
+        List<List<CourseComponentDto>> responseCourses = resultCourses.stream()
                 .map(course -> course.stream()
                         .map(component -> {
                             Long spotId = component.getTourSpot().getTourspotId();
                             LocalDateTime time = component.getTourspotTm();
 
-                            // 혼잡도 조회
                             Optional<TourSpotFutureCongestion> congestion =
                                     futureCongestionRepository.findByTourSpotIdAndFcstTime(spotId, time.format(formatter));
 
-                            CongestionLevel level = congestion.get().getCongestionLvl();;
+                            CongestionLevel level = congestion.get().getCongestionLvl();
 
-                            return CourseComponentResponse.from(component, level);
+                            return CourseComponentDto.from(component, level);
                         })
-                        .toList())
+                        .toList()
+                )
                 .toList();
+
+        responseCourses.forEach(
+                singleCourse -> {
+                    String tempCourseId = "tempCourse:" + UUID.randomUUID();
+                    courseResponses.add(courseResponseMapper.toResponse(tempCourseId, singleCourse));
+                    redisTemplate.opsForValue().set(tempCourseId, singleCourse, Duration.ofMinutes(30));
+                }
+        );
+
+        return courseResponses;
     }
 
     private boolean isDuplicateCourse(List<CourseComponent> newCourse, List<List<CourseComponent>> existingCourses) {
@@ -113,6 +132,7 @@ public class CourseService {
 
     private List<CourseComponent> buildCourse(FilteredTourSpot startArea, List<FilteredTourSpot> candidates,
                                                double userLat, double userLon, DateTimeFormatter formatter) {
+
         Set<TourSpot> visited = new HashSet<>();
         visited.add(startArea.tourSpot());
 
@@ -132,10 +152,6 @@ public class CourseService {
             currentTime = next.tourspotTm();
             course.add(courseMapper.toEntity(next));
             current = next;
-        }
-
-        for (CourseComponent c : course){
-            System.out.println("시작 시간: " + c.getTourspotTm());
         }
         return course;
     }
