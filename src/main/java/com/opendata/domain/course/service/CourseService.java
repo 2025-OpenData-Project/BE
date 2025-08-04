@@ -1,10 +1,14 @@
 package com.opendata.domain.course.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opendata.domain.course.dto.response.CourseComponentDto;
 import com.opendata.domain.course.dto.response.CourseResponse;
 
+import com.opendata.domain.course.entity.Course;
 import com.opendata.domain.course.entity.CourseComponent;
-import com.opendata.domain.course.mapper.CourseMapper;
+import com.opendata.domain.course.mapper.CourseComponentMapper;
+import com.opendata.domain.course.repository.CourseComponentRepository;
 import com.opendata.domain.tourspot.dto.FilteredTourSpot;
 
 import com.opendata.domain.course.repository.CourseRepository;
@@ -16,13 +20,16 @@ import com.opendata.domain.tourspot.mapper.CourseResponseMapper;
 import com.opendata.domain.tourspot.repository.FutureCongestionRepository;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
 
+import com.opendata.domain.user.entity.User;
 import com.opendata.domain.user.repository.UserRepository;
 
 
+import com.opendata.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -35,7 +42,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
-    private final CourseMapper courseMapper;
+    private final CourseComponentRepository courseComponentRepository;
+    private final CourseComponentMapper courseComponentMapper;
     private final TourSpotRepository tourSpotRepository;
     private final FutureCongestionRepository futureCongestionRepository;
     private final UserRepository userRepository;
@@ -139,7 +147,7 @@ public class CourseService {
         List<CourseComponent> course = new ArrayList<>();
         FilteredTourSpot current = startArea;
         LocalDateTime currentTime = current.tourspotTm();
-        course.add(courseMapper.toEntity(current));
+        course.add(courseComponentMapper.toEntity(current));
 
         double dx = startArea.tourSpot().getAddress().getLatitude() - userLat;
         double dy = startArea.tourSpot().getAddress().getLongitude() - userLon;
@@ -150,7 +158,7 @@ public class CourseService {
             if (next == null) break;
             visited.add(next.tourSpot());
             currentTime = next.tourspotTm();
-            course.add(courseMapper.toEntity(next));
+            course.add(courseComponentMapper.toEntity(next));
             current = next;
         }
         return course;
@@ -198,11 +206,46 @@ public class CourseService {
                 .orElse(null);
     }
 
-//    public Course likeCourse(CustomUserDetails customUserDetails, CourseLikeRequest request) {
-//        User user = userRepository.findUserByEmail(customUserDetails.getEmail());
-//        Course course = request.from(user.getId());
-//        return courseRepository.save(course);
-//    }
+    @Transactional
+    public void likeCourse(String courseId) {
+        User user = userRepository.findById(1L).orElseThrow();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<?> rawList = (List<?>) redisTemplate.opsForValue().get("tempCourse:" + courseId);
+
+        List<CourseComponentDto> tempCourse = objectMapper.convertValue(
+                rawList,
+                new TypeReference<List<CourseComponentDto>>() {}
+        );
+
+        tempCourse.forEach(
+                tc ->{
+                    System.out.println(tc.tourspotId());
+                    System.out.println(tc.tourSpotName());
+                }
+        );
+        Course course = Course.builder()
+                .user(user)
+                .build();
+
+        courseRepository.save(course);
+        for(int i = 0; i < tempCourse.size(); i++){
+            CourseComponentDto courseComponentDto = tempCourse.get(i);
+            if (i == 0){
+                course.assignStartDtm(DateUtil.parseTime(courseComponentDto.time()));
+            }
+            if (i == tempCourse.size()-1){
+                course.assignEndDtm(DateUtil.parseTime(courseComponentDto.time()));
+            }
+            TourSpot tourSpot = tourSpotRepository.findById(courseComponentDto.tourspotId()).orElseThrow();
+            CourseComponent courseComponent = courseComponentMapper.toEntity(tourSpot, DateUtil.parseTime(courseComponentDto.time()), course);
+
+            courseComponentRepository.save(courseComponent);
+        }
+    }
+
+
+
 //
 //    public CourseSpecResponse findCourseSpec(Long courseId){
 //        return CourseSpecResponse.from(courseRepository.findById(courseId).orElseThrow());
