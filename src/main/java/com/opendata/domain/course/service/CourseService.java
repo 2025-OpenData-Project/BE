@@ -7,7 +7,9 @@ import com.opendata.domain.course.dto.response.CourseResponse;
 
 import com.opendata.domain.course.entity.Course;
 import com.opendata.domain.course.entity.CourseComponent;
+import com.opendata.domain.course.exception.CourseNotFoundException;
 import com.opendata.domain.course.mapper.CourseComponentMapper;
+import com.opendata.domain.course.message.CourseMessages;
 import com.opendata.domain.course.repository.CourseComponentRepository;
 import com.opendata.domain.tourspot.dto.FilteredTourSpot;
 
@@ -212,18 +214,15 @@ public class CourseService {
         ObjectMapper objectMapper = new ObjectMapper();
 
         List<?> rawList = (List<?>) redisTemplate.opsForValue().get("tempCourse:" + courseId);
+        if (rawList == null || rawList.isEmpty()){
+            throw new CourseNotFoundException(CourseMessages.COURSE_SAVE_EXPIRED);
+        }
 
         List<CourseComponentDto> tempCourse = objectMapper.convertValue(
                 rawList,
                 new TypeReference<List<CourseComponentDto>>() {}
         );
 
-        tempCourse.forEach(
-                tc ->{
-                    System.out.println(tc.tourspotId());
-                    System.out.println(tc.tourSpotName());
-                }
-        );
         Course course = Course.builder()
                 .user(user)
                 .build();
