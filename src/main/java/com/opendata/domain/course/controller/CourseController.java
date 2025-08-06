@@ -2,7 +2,6 @@ package com.opendata.domain.course.controller;
 
 
 import com.opendata.docs.CourseControllerDocs;
-import com.opendata.domain.course.dto.response.CourseComponentDto;
 import com.opendata.domain.course.dto.response.CourseResponse;
 import com.opendata.domain.course.service.CourseService;
 
@@ -33,12 +32,13 @@ public class CourseController implements CourseControllerDocs {
                 courseService.recommendCourses(lat, lon, startTime, endTime, tourspot)));
     }
 
-//    @PostMapping("/like")
-//    public ResponseEntity<ApiResponse<Course>> postCourseLike(
+    @PostMapping("/like/{courseId}")
+    public ResponseEntity<ApiResponse<Void>> postCourseLike(
 //            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-//            @RequestBody CourseLikeRequest request){
-//        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.likeCourse(customUserDetails, request)));
-//    }
+            @PathVariable String courseId){
+        courseService.likeCourse(courseId);
+        return ResponseEntity.ok(ApiResponse.onSuccessVoid());
+    }
 //
 //    @GetMapping("/spec/{courseId}")
 //    public ResponseEntity<ApiResponse<CourseSpecResponse>> getCourseSpec(@PathVariable Long courseId){
