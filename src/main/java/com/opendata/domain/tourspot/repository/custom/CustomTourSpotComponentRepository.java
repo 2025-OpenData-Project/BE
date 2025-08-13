@@ -1,5 +1,4 @@
 package com.opendata.domain.tourspot.repository.custom;
 
-public interface CustomTourSpotRelatedRepository {
-
+public interface CustomTourSpotComponentRepository {
 }

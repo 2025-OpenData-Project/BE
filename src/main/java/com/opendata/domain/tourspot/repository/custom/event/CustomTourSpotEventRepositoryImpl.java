@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.event;
 
 import com.opendata.domain.tourspot.entity.QTourSpotEvent;
 import com.opendata.domain.tourspot.entity.TourSpot;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomTourSpotEventRepositoryImpl implements CustomTourSpotEventRepository{
+public class CustomTourSpotEventRepositoryImpl implements CustomTourSpotEventRepository {
 
     private final JPAQueryFactory queryFactory;
 

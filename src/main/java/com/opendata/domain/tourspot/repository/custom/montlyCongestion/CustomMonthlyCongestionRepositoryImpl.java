@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.montlyCongestion;
 
 import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 import com.querydsl.jpa.impl.JPAQueryFactory;
