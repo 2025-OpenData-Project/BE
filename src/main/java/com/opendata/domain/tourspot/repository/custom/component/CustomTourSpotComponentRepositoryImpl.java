@@ -21,4 +21,29 @@ public class CustomTourSpotComponentRepositoryImpl implements CustomTourSpotComp
                 .distinct()
                 .fetch();
     }
+
+    @Override
+    public boolean existsByUserIdAndTourSpotId(Long userId, Long tourSpotId) {
+        QTourSpotComponent q = QTourSpotComponent.tourSpotComponent;
+        Integer fetchOne = queryFactory
+                .selectOne()
+                .from(q)
+                .where(
+                        q.userId.eq(userId)
+                                .and(q.tourSpotId.eq(tourSpotId))
+                )
+                .fetchFirst(); // limit 1
+
+        return fetchOne != null;
+    }
+
+    @Override
+    public long countByUserId(Long userId) {
+        QTourSpotComponent q = QTourSpotComponent.tourSpotComponent;
+        return queryFactory
+                .select(q.count())
+                .from(q)
+                .where(q.userId.eq(userId))
+                .fetchOne();
+    }
 }

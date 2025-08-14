@@ -25,6 +25,8 @@ import com.opendata.domain.tourspot.repository.CurrentCongestionRepository;
 import com.opendata.domain.tourspot.repository.TourSpotComponentRepository;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
 import com.opendata.domain.tourspot.service.TourSpotService;
+import com.opendata.global.response.exception.GlobalException;
+import com.opendata.global.response.status.ErrorStatus;
 import com.opendata.global.security.CustomUserDetails;
 import com.opendata.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +68,12 @@ public class MypageService {
     public void saveUserTourSpot(CustomUserDetails customUserDetails,Long tourSpotId)
     {
         Long userId = customUserDetails.getUserId();
+        if (tourSpotComponentRepository.existsByUserIdAndTourSpotId(userId, tourSpotId)) {
+            throw new GlobalException(ErrorStatus.TOURSPOT_ALREADY_EXISTS);
+        }
+        if (tourSpotComponentRepository.countByUserId(userId) >= 5) {
+            throw new GlobalException(ErrorStatus.TOURSPOT_EXCEEDS);
+        }
         TourSpotComponent tourSpotComponent = TourSpotComponent.toTourSpotComponent(userId, tourSpotId);
         tourSpotComponentRepository.save(tourSpotComponent);
     }

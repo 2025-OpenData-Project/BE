@@ -8,7 +8,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "tourspot_component")
+@Table(
+        name = "tourspot_component",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_tourspot", columnNames = {"user_id", "tour_spot_id"})
+        }
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

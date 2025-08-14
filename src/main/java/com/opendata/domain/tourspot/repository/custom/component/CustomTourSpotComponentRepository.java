@@ -6,4 +6,7 @@ import java.util.List;
 
 public interface CustomTourSpotComponentRepository {
     List<TourSpotComponent> findAllByUserId(Long userId);
+    boolean existsByUserIdAndTourSpotId(Long userId, Long tourSpotId);
+
+    long countByUserId(Long userId);
 }
