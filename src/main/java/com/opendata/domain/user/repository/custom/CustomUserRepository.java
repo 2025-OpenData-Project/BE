@@ -5,4 +5,6 @@ import com.opendata.domain.user.entity.User;
 
 public interface CustomUserRepository {
     User findUserByEmail(String email);
+    User findUserById(Long userId);
+    void deleteUserById(Long userId);
 }
