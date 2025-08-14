@@ -1,18 +1,15 @@
 package com.opendata.domain.mypage.controller;
 
 import com.opendata.domain.course.dto.response.CourseHistoryResponse;
-import com.opendata.domain.course.dto.response.CourseResponse;
-import com.opendata.domain.course.entity.Course;
 import com.opendata.domain.mypage.service.MypageService;
+import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
+import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.global.response.ApiResponse;
 import com.opendata.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,4 +26,19 @@ public class MypageController
     ){
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getCourses(customUserDetails)));
     }
+    @PostMapping("/preferences")
+    public ResponseEntity<ApiResponse<Void>> updateTourSpot(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam Long tourSpotId
+    ){
+        mypageService.saveUserTourSpot(customUserDetails,tourSpotId);
+        return ResponseEntity.ok(ApiResponse.onSuccessVoid());
+    }
+    @GetMapping("/preferences")
+    public ResponseEntity<ApiResponse<List<TourSpotDetailResponse>>> findTourSpot(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getTourSpotDetail(customUserDetails)));
+    }
+
 }
