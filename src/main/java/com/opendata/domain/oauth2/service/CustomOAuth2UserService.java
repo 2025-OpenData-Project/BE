@@ -41,7 +41,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService
         User existData= userRepository.findUserByEmail(oAuth2Response.getEmail());
         if (existData == null) {
 
-            User user= User.create(oAuth2Response.getEmail(),oAuth2Response.getName(),1L);
+            User user= User.create(oAuth2Response.getEmail(),oAuth2Response.getName(),FREE);
             userRepository.save(user);
 
             UserDto userDTO = new UserDto();
