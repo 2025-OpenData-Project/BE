@@ -9,4 +9,6 @@ public interface CustomTourSpotComponentRepository {
     boolean existsByUserIdAndTourSpotId(Long userId, Long tourSpotId);
 
     long countByUserId(Long userId);
+
+    void deleteByUserIdAndTourSpotId(Long userId, Long tourSpotId);
 }

@@ -46,4 +46,13 @@ public class CustomTourSpotComponentRepositoryImpl implements CustomTourSpotComp
                 .where(q.userId.eq(userId))
                 .fetchOne();
     }
+
+    @Override
+    public void deleteByUserIdAndTourSpotId(Long userId, Long tourSpotId) {
+        QTourSpotComponent q = QTourSpotComponent.tourSpotComponent;
+        queryFactory
+                .delete(q)
+                .where(q.userId.eq(userId), q.tourSpotId.eq(tourSpotId))
+                .execute();
+    }
 }

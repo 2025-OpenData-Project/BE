@@ -40,5 +40,13 @@ public class MypageController
     ){
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getTourSpotDetail(customUserDetails)));
     }
+    @DeleteMapping("/preferences")
+    public ResponseEntity<ApiResponse<Void>> deleteTourSpot(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam Long tourSpotId
+    ){
+        mypageService.deleteTourSpot(customUserDetails,tourSpotId);
+        return ResponseEntity.ok(ApiResponse.onSuccessVoid());
+    }
 
 }

@@ -29,6 +29,7 @@ import com.opendata.global.response.exception.GlobalException;
 import com.opendata.global.response.status.ErrorStatus;
 import com.opendata.global.security.CustomUserDetails;
 import com.opendata.global.util.DateUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +66,7 @@ public class MypageService {
 
 
     }
+    @Transactional
     public void saveUserTourSpot(CustomUserDetails customUserDetails,Long tourSpotId)
     {
         Long userId = customUserDetails.getUserId();
@@ -92,5 +94,11 @@ public class MypageService {
                 })
                 .collect(Collectors.toList());
 
+    }
+    @Transactional
+    public void deleteTourSpot(CustomUserDetails customUserDetails, Long tourSpotId)
+    {
+        Long userId= customUserDetails.getUserId();
+        tourSpotComponentRepository.deleteByUserIdAndTourSpotId(userId, tourSpotId);
     }
 }
