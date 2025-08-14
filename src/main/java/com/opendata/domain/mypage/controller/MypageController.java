@@ -1,5 +1,6 @@
 package com.opendata.domain.mypage.controller;
 
+import com.opendata.docs.MyPageControllerDocs;
 import com.opendata.domain.course.dto.response.CourseHistoryResponse;
 import com.opendata.domain.mypage.service.MypageService;
 import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
-public class MypageController
+public class MypageController implements MyPageControllerDocs
 {
     private final MypageService mypageService;
 
