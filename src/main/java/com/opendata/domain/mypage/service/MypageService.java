@@ -25,6 +25,9 @@ import com.opendata.domain.tourspot.repository.CurrentCongestionRepository;
 import com.opendata.domain.tourspot.repository.TourSpotComponentRepository;
 import com.opendata.domain.tourspot.repository.TourSpotRepository;
 import com.opendata.domain.tourspot.service.TourSpotService;
+import com.opendata.domain.user.dto.UserResponse;
+import com.opendata.domain.user.entity.User;
+import com.opendata.domain.user.repository.UserRepository;
 import com.opendata.global.response.exception.GlobalException;
 import com.opendata.global.response.status.ErrorStatus;
 import com.opendata.global.security.CustomUserDetails;
@@ -41,6 +44,7 @@ import java.util.stream.Collectors;
 public class MypageService {
     private final CourseRepository courseRepository;
     private final TourSpotComponentRepository tourSpotComponentRepository;
+    private final UserRepository userRepository;
 
     private final TourSpotService tourSpotService;
 
@@ -100,5 +104,16 @@ public class MypageService {
     {
         Long userId= customUserDetails.getUserId();
         tourSpotComponentRepository.deleteByUserIdAndTourSpotId(userId, tourSpotId);
+    }
+
+    public UserResponse getUser(CustomUserDetails customUserDetails)
+    {
+        User user= userRepository.findUserByEmail(customUserDetails.getEmail());
+        if(user==null){
+            throw new GlobalException(ErrorStatus.USER_NOT_FOUND);
+        }
+        return UserResponse.toUserResponse(user.getEmail(),user.getMembership(),user.getName());
+
+
     }
 }

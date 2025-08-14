@@ -4,6 +4,7 @@ import com.opendata.domain.course.dto.response.CourseHistoryResponse;
 import com.opendata.domain.mypage.service.MypageService;
 import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
 import com.opendata.domain.tourspot.entity.TourSpot;
+import com.opendata.domain.user.dto.UserResponse;
 import com.opendata.global.response.ApiResponse;
 import com.opendata.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +49,16 @@ public class MypageController
         mypageService.deleteTourSpot(customUserDetails,tourSpotId);
         return ResponseEntity.ok(ApiResponse.onSuccessVoid());
     }
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse<UserResponse>> findUser(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getUser(customUserDetails)));
+    }
+
+
+
+
+
 
 }
