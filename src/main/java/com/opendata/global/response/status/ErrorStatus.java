@@ -26,7 +26,10 @@ public enum ErrorStatus implements BaseStatusCode {
     ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST,"ADDRESS_001","해당 주소가 존재하지 않습니다."),
 
     //관광지
-    TOURSPOT_NOT_FOUND(HttpStatus.BAD_REQUEST,"TOURSPOT_001","해당 관광지가 존재하지 않습니다.");
+    TOURSPOT_NOT_FOUND(HttpStatus.BAD_REQUEST,"TOURSPOT_001","해당 관광지가 존재하지 않습니다."),
+    TOURSPOT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"TOURSPOT_002","해당 관광지가 이미 존재합니다."),
+    TOURSPOT_EXCEEDS(HttpStatus.BAD_REQUEST,"TOURSPOT_003","추가할 수 있는 관광지 개수가 초과되었습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
