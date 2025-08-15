@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom.montlyCongestion;
+package com.opendata.domain.tourspot.repository.custom.monthlyCongestion;
 
 import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 
