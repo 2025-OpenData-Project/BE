@@ -67,12 +67,16 @@ public class TourSpotService
         List<TourSpotEvent> tourSpotEvents = tourSpotEventRepository.findAllByTourSpot(tourSpot);
         List<TourSpotTag> tourSpotTags = tourSpotTagRepository.findAllByTourSpot(tourSpot);
 
-        System.out.println(tourSpotCurrentCongestion.getCurrentCongestionId());
+        String congestionLabel = null;
+        if (tourSpotCurrentCongestion != null) {
+            congestionLabel = tourSpotCurrentCongestion.getCongestionLvl().getCongestionLabel();
+        }
+
 
         TourSpotDetailResponse t = tourSpotDetailMapper.toResponse(
                 tourSpot,
                 tourSpotDetailMapper.toAddressDto(address),
-                tourSpotCurrentCongestion.getCongestionLvl().getCongestionLabel(),
+                congestionLabel,
                 tourSpotDetailMapper.toEventDtos(tourSpotEvents),
                 tourSpotDetailMapper.toTagDtos(tourSpotTags)
         );

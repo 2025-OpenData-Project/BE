@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.event;
 
 import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.domain.tourspot.entity.TourSpotEvent;

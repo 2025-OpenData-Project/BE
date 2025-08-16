@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.futureCongestion;
 
 import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;

@@ -30,6 +30,9 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if(accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        }
 
         try {
             jwtUtil.isExpired(accessToken);
