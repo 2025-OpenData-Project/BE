@@ -23,16 +23,15 @@ import com.opendata.global.response.status.ErrorStatus;
 import com.opendata.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,82 +83,50 @@ public class TourSpotService
         return t;
     }
 
-    //@Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
         List<CompletableFuture<CityDataDto>> futures = areaNames.stream()
                 .map(cityDataService::fetchCityData)
                 .toList();
+
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
-        List<TourSpot> areaList = futures.stream()
+        List<CityDataDto> dtoList = futures.stream()
                 .map(CompletableFuture::join)
-                .map(this::convertToEntity)
                 .filter(Objects::nonNull)
                 .toList();
 
+        // 미리 DB 조회
+        List<TourSpot> existing = tourSpotRepository.findAll();
+        Map<String, TourSpot> existingMap = existing.stream()
+                .collect(Collectors.toMap(TourSpot::getTourspotNm, t -> t));
 
-        tourSpotRepository.saveAll(areaList);
+        // 없는 것만 생성
+        List<TourSpot> newSpots = dtoList.stream()
+                .map(dto -> convertToEntity(dto, existingMap)) // Optional<TourSpot>
+                .filter(Optional::isPresent)                   // 값 있는 것만
+                .map(Optional::get)                            // Optional -> TourSpot
+                .toList();
 
+        tourSpotRepository.saveAll(newSpots);
     }
 
-    @Transactional
-    private TourSpot convertToEntity(CityDataDto cityDataDto) {
-        if (cityDataDto.getCitydata() == null) {
-            return null;
-        }
-
+    private Optional<TourSpot> convertToEntity(CityDataDto cityDataDto, Map<String, TourSpot> existingMap) {
         var data = cityDataDto.getCitydata();
+        if (data == null) return Optional.empty();
 
-        List<CityDataDto.LivePopulationStatus> livePopulationStatuses = data.getLivePopulationStatuses();
-        List<CityDataDto.EventData> eventDataList = data.getEventDataList();
+        String tourspotNm = data.getAreaName();
+        TourSpot tourSpot = existingMap.getOrDefault(
+                tourspotNm,
+                TourSpot.create(addressCache.getByKorName(tourspotNm), tourspotNm)
+        );
 
+        insertTourSpotEvents(data.getEventDataList(), tourSpot);
+        insertCongestion(data.getLivePopulationStatuses(), tourSpot);
 
-
-        String tourspotNm = cityDataDto.getCitydata().getAreaName();
-
-        Address address = addressCache.getByKorName(tourspotNm);
-        TourSpot tourSpot = tourSpotRepository.findByName(tourspotNm)
-                .orElseGet(() -> TourSpot.create(address, tourspotNm));
-
-
-        /// 없을 떄는 저장 먼저 해서 tourspotId 생성
-        if(tourSpot.getTourspotId() == null){
-            tourSpotRepository.save(tourSpot);
-        }
-
-        insertTourSpotEvents(eventDataList, tourSpot);
-
-        List<TourSpotFutureCongestion> futureCongestions = new ArrayList<>();
-
-
-        livePopulationStatuses.forEach(status -> {
-            if (!status.getFCstPpltn().isEmpty()) {
-                String curTime = status.getFCstPpltn().get(0).getFcstTime();
-                currentCongestionMapper.toEntity(status, curTime, tourSpot);
-            }
-
-            status.getFCstPpltn().forEach(futureData -> {
-                String rawLevel = futureData.getFcstCongestLvl();
-                String rawFcstTime = futureData.getFcstTime();
-                CongestionLevel congestionLevel = CongestionLevel.resolve(rawLevel);
-
-
-                Optional<TourSpotFutureCongestion> existing = futureCongestionRepository
-                        .findByTourSpotIdAndFcstTime(tourSpot.getTourspotId(), rawFcstTime);
-
-                if (existing.isPresent()) {
-                    existing.get().assignCongestion(congestionLevel);
-                    futureCongestions.add(existing.get());
-                } else {
-                    futureCongestionMapper.toTourSpotFutureCongestion(futureData, tourSpot, congestionLevel);
-                }
-
-            });
-        });
-
-        return tourSpot;
+        return Optional.of(tourSpot);
     }
 
     private void insertTourSpotEvents(List<CityDataDto.EventData> eventDataList, TourSpot tourSpot) {
@@ -168,6 +135,34 @@ public class TourSpotService
                 tourSpotEventMapper.toTourSpotEvent(eventData, tourSpot);
             }
         });
+    }
+
+    private void insertCongestion(List<CityDataDto.LivePopulationStatus> populationStatuses, TourSpot tourSpot){
+        populationStatuses.forEach(
+                populationStatus -> {
+                    if (!populationStatus.getFCstPpltn().isEmpty()) {
+                        String curTime = populationStatus.getFCstPpltn().get(0).getFcstTime();
+                        currentCongestionMapper.toEntity(populationStatus, curTime, tourSpot);
+                        populationStatus.getFCstPpltn().forEach(futureData -> {
+                            String rawLevel = futureData.getFcstCongestLvl();
+                            String rawFcstTime = futureData.getFcstTime();
+                            CongestionLevel congestionLevel = CongestionLevel.resolve(rawLevel);
+
+
+                            Optional<TourSpotFutureCongestion> existing = futureCongestionRepository
+                                    .findByTourSpotIdAndFcstTime(tourSpot.getTourspotId(), rawFcstTime);
+
+                            if (existing.isPresent()) {
+                                existing.get().assignCongestion(congestionLevel);
+                            } else {
+                                futureCongestionMapper.toTourSpotFutureCongestion(futureData, tourSpot, congestionLevel);
+                            }
+
+                        });
+                    }
+
+                }
+        );
     }
 
     @Transactional
