@@ -7,7 +7,9 @@ import com.opendata.domain.course.dto.response.CourseResponse;
 
 import com.opendata.domain.course.entity.Course;
 import com.opendata.domain.course.entity.CourseComponent;
+import com.opendata.domain.course.exception.CourseNotFoundException;
 import com.opendata.domain.course.mapper.CourseComponentMapper;
+import com.opendata.domain.course.message.CourseMessages;
 import com.opendata.domain.course.repository.CourseComponentRepository;
 import com.opendata.domain.tourspot.dto.FilteredTourSpot;
 
@@ -24,6 +26,7 @@ import com.opendata.domain.user.entity.User;
 import com.opendata.domain.user.repository.UserRepository;
 
 
+import com.opendata.global.security.CustomUserDetails;
 import com.opendata.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -207,23 +210,21 @@ public class CourseService {
     }
 
     @Transactional
-    public void likeCourse(String courseId) {
-        User user = userRepository.findById(1L).orElseThrow();
+    public void likeCourse(String courseId, CustomUserDetails customUserDetails) {
+        String email = customUserDetails.getUserEmail();
+        User user = userRepository.findUserByEmail(email);
         ObjectMapper objectMapper = new ObjectMapper();
 
         List<?> rawList = (List<?>) redisTemplate.opsForValue().get("tempCourse:" + courseId);
+        if (rawList == null || rawList.isEmpty()){
+            throw new CourseNotFoundException(CourseMessages.COURSE_SAVE_EXPIRED);
+        }
 
         List<CourseComponentDto> tempCourse = objectMapper.convertValue(
                 rawList,
                 new TypeReference<List<CourseComponentDto>>() {}
         );
 
-        tempCourse.forEach(
-                tc ->{
-                    System.out.println(tc.tourspotId());
-                    System.out.println(tc.tourSpotName());
-                }
-        );
         Course course = Course.builder()
                 .user(user)
                 .build();

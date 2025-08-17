@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.tourSpot;
 
 import com.opendata.domain.address.entity.Address;
 import com.opendata.domain.tourspot.entity.QTourSpot;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomTourSpotRepositoryImpl implements CustomTourSpotRepository{
+public class CustomTourSpotRepositoryImpl implements CustomTourSpotRepository {
 
     private final JPAQueryFactory queryFactory;
 

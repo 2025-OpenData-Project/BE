@@ -7,8 +7,10 @@ import com.opendata.domain.course.service.CourseService;
 
 import com.opendata.global.response.ApiResponse;
 
+import com.opendata.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class CourseController implements CourseControllerDocs {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<CourseResponse>>> findCourses(
-            //@AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam double lat,
             @RequestParam double lon,
             @RequestParam String startTime,
@@ -34,9 +36,9 @@ public class CourseController implements CourseControllerDocs {
 
     @PostMapping("/like/{courseId}")
     public ResponseEntity<ApiResponse<Void>> postCourseLike(
-//            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable String courseId){
-        courseService.likeCourse(courseId);
+        courseService.likeCourse(courseId,customUserDetails);
         return ResponseEntity.ok(ApiResponse.onSuccessVoid());
     }
 //

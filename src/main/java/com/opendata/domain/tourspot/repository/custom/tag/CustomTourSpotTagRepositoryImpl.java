@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.tag;
 
 import com.opendata.domain.tourspot.entity.QTourSpotTag;
 import com.opendata.domain.tourspot.entity.TourSpot;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomTourSpotTagRepositoryImpl implements CustomTourSpotTagRepository{
+public class CustomTourSpotTagRepositoryImpl implements CustomTourSpotTagRepository {
     private final JPAQueryFactory queryFactory;
     @Override
     public List<TourSpotTag> findAllByTourSpot(TourSpot tourSpot) {

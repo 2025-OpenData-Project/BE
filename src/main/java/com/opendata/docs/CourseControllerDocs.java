@@ -3,12 +3,15 @@ package com.opendata.docs;
 import com.opendata.domain.course.dto.response.CourseComponentDto;
 import com.opendata.domain.course.dto.response.CourseResponse;
 import com.opendata.global.response.ApiResponse;
+import com.opendata.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -57,6 +60,7 @@ public interface CourseControllerDocs {
             )
     })
     ResponseEntity<ApiResponse<List<CourseResponse>>> findCourses(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam double lat,
             @RequestParam double lon,
             @RequestParam String startTime,
@@ -64,32 +68,32 @@ public interface CourseControllerDocs {
             @RequestParam String tourspot
     );
 
-//    @Operation(summary = "관광 코스 좋아요 등록", description = "사용자가 특정 관광 코스를 좋아요할 수 있습니다.")
-//    @ApiResponses(value = {
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "좋아요 등록 성공"),
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-//                    responseCode = "401",
-//                    description = "인증 실패",
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            examples = @ExampleObject(
-//                                    name = "인증 실패",
-//                                    summary = "로그인 필요",
-//                                    value = """
-//                                    {
-//                                      "success": false,
-//                                      "code": "COMMON_401",
-//                                      "message": "인증이 필요합니다."
-//                                    }
-//                                    """
-//                            )
-//                    )
-//            )
-//    })
-//    ResponseEntity<ApiResponse<Course>> postCourseLike(
-//            CustomUserDetails customUserDetails,
-//            CourseLikeRequest request
-//    );
+    @Operation(summary = "관광 코스 좋아요 등록", description = "사용자가 특정 관광 코스를 좋아요할 수 있습니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "좋아요 등록 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "인증 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "인증 실패",
+                                    summary = "로그인 필요",
+                                    value = """
+                                    {
+                                      "success": false,
+                                      "code": "COMMON_401",
+                                      "message": "인증이 필요합니다."
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<ApiResponse<Void>> postCourseLike(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable String courseId
+    );
 //
 //    @Operation(summary = "관광 코스 상세 조회", description = "관광 코스 ID로 세부 스펙(시간대별 장소 등)을 조회합니다.")
 //    @ApiResponses(value = {

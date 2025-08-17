@@ -20,8 +20,9 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "membership_id", nullable = false)
-    private Long membershipId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "membership", nullable = false)
+    private MemberShip membership;
 
     @Column(name = "user_email")
     private String email;
@@ -29,14 +30,14 @@ public class User extends BaseEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Course> courseList;
 
-    public static User create(String email, String name, Long membershipId) {
+    public static User create(String email, String name, MemberShip membership) {
         return User.builder()
                 .email(email)
                 .name(name)
-                .membershipId(membershipId)
+                .membership(membership)
                 .build();
     }
     public void updateUserInfo(String name) {

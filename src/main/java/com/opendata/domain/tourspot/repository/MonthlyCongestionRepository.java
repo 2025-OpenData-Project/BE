@@ -1,7 +1,7 @@
 package com.opendata.domain.tourspot.repository;
 
 import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
-import com.opendata.domain.tourspot.repository.custom.CustomMonthlyCongestionRepository;
+import com.opendata.domain.tourspot.repository.custom.monthlyCongestion.CustomMonthlyCongestionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

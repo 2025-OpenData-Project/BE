@@ -1,16 +1,15 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.currentCongestion;
 
 import com.opendata.domain.tourspot.entity.QTourSpotCurrentCongestion;
 import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.domain.tourspot.entity.TourSpotCurrentCongestion;
-import com.querydsl.core.QueryFactory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomCurrentCongestionRepositoryImpl implements CustomCurrentCongestionRepository{
+public class CustomCurrentCongestionRepositoryImpl implements CustomCurrentCongestionRepository {
 
     private final JPAQueryFactory queryFactory;
     @Override

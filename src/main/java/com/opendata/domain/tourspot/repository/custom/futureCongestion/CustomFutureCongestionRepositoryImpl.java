@@ -1,4 +1,4 @@
-package com.opendata.domain.tourspot.repository.custom;
+package com.opendata.domain.tourspot.repository.custom.futureCongestion;
 
 import com.opendata.domain.tourspot.entity.QTourSpotFutureCongestion;
 import com.opendata.domain.tourspot.entity.TourSpotFutureCongestion;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomFutureCongestionRepositoryImpl implements CustomFutureCongestionRepository{
+public class CustomFutureCongestionRepositoryImpl implements CustomFutureCongestionRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
