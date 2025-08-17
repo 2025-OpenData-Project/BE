@@ -1,13 +1,8 @@
 spring:
+  profiles:
+    active: prod
   cache:
     type: redis
-
-  datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:3306/${MYSQL_DB}
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
   data:
     redis:
       host: ${REDIS_HOST}
@@ -15,18 +10,17 @@ spring:
       username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
       timeout: 6000ms
-
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     serialization:
       write-dates-as-timestamps: false
   jpa:
     hibernate:
-      ddl-auto: update # 또는 validate, none 등
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
+      ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
   security:
     oauth2:
       client:
@@ -41,8 +35,6 @@ spring:
               - profile
               - email
 
-
-
 jwt:
   issuer: project.doctalk@gmail.com
   secret: "jfsgkhdsjkweoiruwqejkrfbhnsadkjlfghbwerqewrsdfgdsfagbdf"
@@ -56,24 +48,15 @@ server:
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
-    min-response-size: 1024 # 1KB ??? ??? ?? ??
+    min-response-size: 1024
 
 springdoc:
   default-produces-media-type: application/json
   override-with-generic-response: false
-
-
-#
-#logging:
-#  level:
-#    root: INFO
-#    org.springframework.security: DEBUG
-#    com.opendata: DEBUG
-#    org.hibernate.SQL: DEBUG
-#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
-
-
+logging:
+  level:
+    org.hibernate.SQL: debug          # 실행되는 SQL문
+    org.hibernate.type.descriptor.sql: trace  # 바인딩되는 파라미터 값
 api:
   seoul_city_data_key: ${SEOUL_CITY_DATA_KEY}
   tour_api_tourspot_key: ${TOUR_API_TOURSPOT_KEY}
@@ -81,4 +64,22 @@ api:
   zz: wabF%2F2ep3dqrmXQcTNupVTpQXrL3wBuOK1TSRhAo8mwZ9Wqop4GCNUXkqSdf4%2Bwxa1%2FdOCkfmbBXYQL13wlwKQ%3D%3D
   xx: J28I%2B2X%2FLQ8vHJaw2Yorr492RFOq2%2FRBGCkl1hVMJCu65fNG5xDvDi7GazJpx3ZKa9xb4fYhq14vtXjWSaHrSw%3D%3D
 
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3307/${MYSQL_DB}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_USER}
 
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:3306/${MYSQL_DB}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
