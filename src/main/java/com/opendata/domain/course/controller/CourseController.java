@@ -2,6 +2,7 @@ package com.opendata.domain.course.controller;
 
 
 import com.opendata.docs.CourseControllerDocs;
+import com.opendata.domain.course.dto.response.CourseComponentDto;
 import com.opendata.domain.course.dto.response.CourseResponse;
 import com.opendata.domain.course.service.CourseService;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/course")
-public class CourseController implements CourseControllerDocs {
+public class CourseController implements CourseControllerDocs{
     private final CourseService courseService;
 
     @GetMapping
@@ -34,16 +35,16 @@ public class CourseController implements CourseControllerDocs {
                 courseService.recommendCourses(lat, lon, startTime, endTime, tourspot)));
     }
 
+    @GetMapping("/{courseId}")
+    public ResponseEntity<ApiResponse<CourseResponse>> getCourseDetail(@PathVariable("courseId") String courseId){
+        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.fetchCourseDetail(courseId)));
+    }
+
     @PostMapping("/like/{courseId}")
     public ResponseEntity<ApiResponse<Void>> postCourseLike(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable String courseId){
-        courseService.likeCourse(courseId,customUserDetails);
+        courseService.likeCourse(courseId, customUserDetails);
         return ResponseEntity.ok(ApiResponse.onSuccessVoid());
     }
-//
-//    @GetMapping("/spec/{courseId}")
-//    public ResponseEntity<ApiResponse<CourseSpecResponse>> getCourseSpec(@PathVariable Long courseId){
-//        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.findCourseSpec(courseId)));
-//    }
 }

@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class CustomCourseRepositoryImpl implements CustomCourseRepository{
@@ -29,5 +30,15 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository{
                 .where(c.user.id.eq(userId))
                 .orderBy(c.startDtm.desc(), cc.tourspotTm.asc())
                 .fetch();
+    }
+
+    @Override
+    public Optional<Course> findByUuid(String uuid) {
+        QCourse qCourse = QCourse.course;
+
+        return Optional.ofNullable(queryFactory.selectFrom(qCourse)
+                .where(qCourse.uuid.eq(uuid))
+                .fetchFirst());
+
     }
 }
