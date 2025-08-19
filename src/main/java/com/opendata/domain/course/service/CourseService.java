@@ -226,6 +226,7 @@ public class CourseService {
         );
 
         Course course = Course.builder()
+                .uuid(courseId)
                 .user(user)
                 .build();
 
@@ -245,6 +246,34 @@ public class CourseService {
         }
     }
 
+    public CourseResponse fetchCourseDetail(String courseId){
+        ObjectMapper objectMapper = new ObjectMapper();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        List<?> rawList = (List<?>) redisTemplate.opsForValue().get("tempCourse:" + courseId);
+        if (rawList == null || rawList.isEmpty()){
+            List<CourseComponentDto> courseComponentDtoList = new ArrayList<>();
+            Course course = courseRepository.findByUuid(courseId).orElseThrow();
+            course.getCourseComponents().forEach(
+                    courseComponent -> {
+                        Long spotId = courseComponent.getTourSpot().getTourspotId();
+                        LocalDateTime time = courseComponent.getTourspotTm();
+
+                        Optional<TourSpotFutureCongestion> congestion =
+                                futureCongestionRepository.findByTourSpotIdAndFcstTime(spotId, time.format(formatter));
+
+                        CongestionLevel level = congestion.get().getCongestionLvl();
+                        courseComponentDtoList.add(CourseComponentDto.from(courseComponent, level));
+
+                    }
+            );
+            return new CourseResponse(courseId, courseComponentDtoList);
+        }
+        List<CourseComponentDto> tempCourse = objectMapper.convertValue(
+                rawList,
+                new TypeReference<List<CourseComponentDto>>() {}
+        );
+        return new CourseResponse(courseId, tempCourse);
+    }
 
 
 //
