@@ -32,6 +32,10 @@ public class DateUtil {
     }
 
     public static LocalDateTime parseTime(String time){
-        return LocalDateTime.parse(time, FORMATTER);
+        String normalized = time.replace("T", " ");
+        if (normalized.length() == 16) { // yyyy-MM-dd HH:mm
+            normalized += ":00";
+        }
+        return LocalDateTime.parse(normalized, FORMATTER);
     }
 }
