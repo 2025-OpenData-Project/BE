@@ -47,11 +47,4 @@ public class CourseController implements CourseControllerDocs{
         courseService.likeCourse(courseId, customUserDetails);
         return ResponseEntity.ok(ApiResponse.onSuccessVoid());
     }
-
-
-//
-//    @GetMapping("/spec/{courseId}")
-//    public ResponseEntity<ApiResponse<CourseSpecResponse>> getCourseSpec(@PathVariable Long courseId){
-//        return ResponseEntity.ok(ApiResponse.onSuccess(courseService.findCourseSpec(courseId)));
-//    }
 }
