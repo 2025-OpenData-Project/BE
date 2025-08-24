@@ -242,6 +242,7 @@ public class TourSpotService
                             return candidates.stream().flatMap(singleAddress -> {
                                 try {
                                     return Stream.of(tourSpotRelatedMapper.toEntity(
+                                            singleAddress,
                                             data.getHubTatsCd(),
                                             data.getHubTatsNm(),
                                             data.getHubCtgryLclsNm(),
