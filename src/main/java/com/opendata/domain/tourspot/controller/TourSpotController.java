@@ -29,6 +29,13 @@ public class TourSpotController implements TourSpotControllerDocs {
         return ResponseEntity.ok().build();
     }
 
+
+    @GetMapping("/related")
+    public ResponseEntity<Void> getRelated() {
+        tourSpotService.saveRelatedTourspot();
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{tourspotId}")
     public ResponseEntity<ApiResponse<TourSpotDetailResponse>> getTourSpotDetail(@PathVariable("tourspotId") Long tourspotId) throws JsonProcessingException {
         return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotDetail(tourspotId)));

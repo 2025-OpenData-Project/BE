@@ -1,5 +1,6 @@
 package com.opendata.domain.tourspot.mapper;
 
+import com.opendata.domain.address.entity.Address;
 import com.opendata.domain.tourspot.dto.MonthlyCongestionDto;
 import com.opendata.domain.tourspot.dto.TourSpotRelatedDto;
 import com.opendata.domain.tourspot.entity.TourSpot;
@@ -16,15 +17,19 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TourSpotRelatedMapper {
 
-    @Mapping(target = "relatedTourSpot", source = "relatedTourSpot")
+    @Mapping(target = "id", ignore = true) // PK는 자동 생성
     TourSpotRelated toEntity(
-            @Context TourSpot currentTourSpot,
-            TourSpot relatedTourSpot
+            @Context Address address,
+            String tourSpotCode,
+            String tourSpotName,
+            String largeCategory,
+            String middleCategory,
+            String mapX,
+            String mapY
     );
 
     @AfterMapping
-    default void assignTourSpot(@MappingTarget TourSpotRelated entity,
-                                   @Context TourSpot currentTourSpot) {
-        entity.assignTourSpot(currentTourSpot);
+    default void assignAddress(@MappingTarget TourSpotRelated tourSpotRelated, @Context Address address){
+        tourSpotRelated.setAddress(address);
     }
 }

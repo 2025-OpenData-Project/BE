@@ -32,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +84,7 @@ public class TourSpotService
         return t;
     }
 
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
@@ -182,53 +183,88 @@ public class TourSpotService
     }
 
     @Transactional
-    public void updateMonthlyCongestion()
-    {
-        //캐시에서 어드레스 뽑아오깅
+    public void saveRelatedTourspot() {
         List<Address> addressList = addressCache.getAll();
-        if(addressList.isEmpty()){
+        if (addressList.isEmpty()) {
             throw new GlobalException(ErrorStatus.ADDRESS_NOT_FOUND);
         }
-        //쓰레드 터짐 오류로 인해 제한
-        ExecutorService executor = Executors.newFixedThreadPool(10);
 
-        List<CompletableFuture<MonthlyCongestionDto>> monthlyCongestionDtoList = addressList.stream()
-                .map(address -> CompletableFuture.supplyAsync(() ->
-                                govCongestionService
-                                        .fetchGovCongestionData(address.getArea().getAreaCodeId(), address.getAddressKorNm())
-                                        .join(),
-                        executor
-                ))
-                .toList();
-        //기다리기
-        CompletableFuture.allOf(monthlyCongestionDtoList.toArray(new CompletableFuture[0])).join();
+        // 원본 Address를 함께 carry하기 위한 래퍼
+        record Fetch(Address source, TourSpotRelatedDto dto) {}
 
-
-        List<TourSpot> updatedSpots = monthlyCongestionDtoList.stream()
-                .map(CompletableFuture::join)
-                .filter(Objects::nonNull)
-                .map(dto -> {
-                    //api에서 관광지 이름 뜯어와서 투어스팟 불러오기
-                    String spotName = extractSpotNameFromDto(dto);
-
-                    return tourSpotRepository.findByName(spotName)
-                            .map(tourSpot -> {
-                                List<TourSpotMonthlyCongestion> monthlyList =
-                                        convertMonthlyDtoToEntities(dto, tourSpot);
-                                tourSpot.updateMonthlyCongestions(monthlyList);
-                                return tourSpot;
-                            })
-                            .orElse(null);
-                })
-                .filter(Objects::nonNull)
+        List<CompletableFuture<Fetch>> futures = addressList.stream()
+                .map(addr -> tourSpotRelatedService
+                        .fetchRelatedTourSpotData(addr.getArea().getAreaCodeId(), addr.getAddressKorNm())
+                        .handle((dto, ex) -> {
+                            if (ex != null) {
+                                log.warn("연관 API 실패 [{}]: {}", addr.getAddressKorNm(), ex.toString());
+                                return new Fetch(addr, null);
+                            }
+                            return new Fetch(addr, dto);
+                        }))
                 .toList();
 
-        tourSpotRepository.saveAll(updatedSpots);
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
+        for (CompletableFuture<Fetch> f : futures) {
+            Fetch fr = f.join();
+            Address sourceAddress = fr.source();
+            TourSpotRelatedDto dto = fr.dto();
 
+            // DTO/아이템 가드
+            if (dto == null ||
+                    dto.getResponse() == null ||
+                    dto.getResponse().getBody() == null ||
+                    dto.getResponse().getBody().getItems() == null ||
+                    dto.getResponse().getBody().getItems().getItemList() == null) {
+                log.warn("관광지 연관 데이터가 비어있음: {}", (Object) null);
+                continue;
+            }
 
+            List<TourSpotRelatedDto.AddressItem> items =
+                    dto.getResponse().getBody().getItems().getItemList();
+            if (items.isEmpty()) {
+                log.warn("관광지 연관 데이터가 비어있음(아이템 없음): 요청={}", sourceAddress.getAddressKorNm());
+                continue;
+            }
+
+            List<TourSpotRelated> relatedTourSpots = items.stream()
+                    .flatMap(data -> {
+                        try {
+                            // 1) 자치구 코드로 후보 Address 조회
+                            String districtCode = data.getSignguCd();
+                            if (districtCode == null || districtCode.isBlank()) return Stream.empty();
+
+                            List<Address> candidates = addressCache.getByAreaId(districtCode);
+                            if (candidates == null || candidates.isEmpty()) return Stream.empty();
+
+                            // 2) 후보 Address 각각을 TourSpot으로 매핑 (없으면 생성)
+                            return candidates.stream().flatMap(singleAddress -> {
+                                try {
+                                    return Stream.of(tourSpotRelatedMapper.toEntity(
+                                            singleAddress,
+                                            data.getHubTatsCd(),
+                                            data.getHubTatsNm(),
+                                            data.getHubCtgryLclsNm(),
+                                            data.getHubCtgryMclsNm(),
+                                            data.getMapX(),
+                                            data.getMapY()));
+                                } catch (Exception e) {
+                                    log.warn("후보 Address 매핑 실패: {} - {}", singleAddress.getAddressKorNm(), e.toString());
+                                    return Stream.<TourSpotRelated>empty();
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            log.warn("연관 매핑 중 예외: {}", e.toString());
+                            return Stream.empty();
+                        }
+                    }).toList();
+
+            tourSpotRelatedRepository.saveAll(relatedTourSpots);
+
+        }
     }
-
     private List<TourSpotMonthlyCongestion> convertMonthlyDtoToEntities(MonthlyCongestionDto monthlyCongestionDto, TourSpot tourSpot )
     {
         if (monthlyCongestionDto == null || tourSpot == null) {
@@ -251,69 +287,7 @@ public class TourSpotService
                 .orElse(null);
     }
 
-    @Transactional
-    public void saveRelatedTourspot()
-    {
-        List<Address> addressList = addressCache.getAll();
-        if(addressList.isEmpty()){
-            throw new GlobalException(ErrorStatus.ADDRESS_NOT_FOUND);
-        }
-        List<CompletableFuture<TourSpotRelatedDto>> tourSpotRelatedDtoList = addressList.stream()
-                .map(address-> tourSpotRelatedService.fetchRelatedTourSpotData(address.getArea().getAreaCodeId(),address.getAddressKorNm()))
-                .toList();
 
-        CompletableFuture.allOf(tourSpotRelatedDtoList.toArray(new CompletableFuture[0])).join();
-
-
-        tourSpotRelatedDtoList.forEach(future->{
-            try
-            {
-                TourSpotRelatedDto dto = future.join();
-                if (dto == null || dto.getResponse() == null || dto.getResponse().getBody() == null
-                        || dto.getResponse().getBody().getItems() == null || dto.getResponse().getBody().getItems().getItemList() == null) {
-                    log.warn("관광지 연관 데이터가 비어있음: {}", dto);
-                    return;
-                }
-                List<TourSpotRelatedDto.AddressItem> items = dto.getResponse()
-                        .getBody()
-                        .getItems()
-                        .getItemList();
-
-
-                String tourSpotName = items.get(0).getTAtsNm();
-                TourSpot currentTourSpot = tourSpotRepository.findByName(tourSpotName)
-                        .orElseThrow(() -> new GlobalException(ErrorStatus.TOURSPOT_NOT_FOUND));
-                List<TourSpotRelated> tourSpotRelateds= items.stream()
-                        .map(data -> {
-                            try
-                            {
-                                TourSpot tourSpot=tourSpotRepository.findByName(data.getRlteTatsNm())
-                                        .orElseThrow(() -> new GlobalException(ErrorStatus.TOURSPOT_NOT_FOUND));
-                                TourSpotRelated tourSpotRelated = tourSpotRelatedMapper.toEntity(currentTourSpot, tourSpot);
-
-                                return tourSpotRelated;
-
-                            }catch (GlobalException globalException){
-                                log.warn("해당 관광지가 없음-공사 api");
-                                return null;
-                            }
-
-                        })
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                if (!tourSpotRelateds.isEmpty()) {
-                    currentTourSpot.updateTourSpotRelated(tourSpotRelateds);
-                    tourSpotRepository.save(currentTourSpot);
-                }
-            }
-            catch(GlobalException globalException){
-                log.warn("해당 관광지가 없음-tourSpot 관광지");
-            }
-
-        });
-
-    }
 
 
 

@@ -29,12 +29,10 @@ public class TourSpotRelatedService
     private String secretKey;
 
 
-    public CompletableFuture<TourSpotRelatedDto> fetchRelatedTourSpotData(Long areaId, String tourSpotName)
-    {
-        String encodedName = URLEncoder.encode(tourSpotName, StandardCharsets.UTF_8);
+    public CompletableFuture<TourSpotRelatedDto> fetchRelatedTourSpotData(Long areaId, String tourSpotName) {
         try {
             URI uri = UriComponentsBuilder
-                    .fromHttpUrl("https://apis.data.go.kr/B551011/TarRlteTarService1/searchKeyword1")
+                    .fromHttpUrl("https://apis.data.go.kr/B551011/LocgoHubTarService1/areaBasedList1")
                     .queryParam("serviceKey", secretKey)
                     .queryParam("pageNo", 1)
                     .queryParam("numOfRows", 5)
@@ -42,8 +40,7 @@ public class TourSpotRelatedService
                     .queryParam("MobileApp", "Test")
                     .queryParam("areaCd", 11)
                     .queryParam("signguCd",areaId)
-                    .queryParam("keyword",encodedName)
-                    .queryParam("baseYm","202503")
+                    .queryParam("baseYm","202504")
                     .queryParam("_type", "json")
                     .build(true)
                     .toUri();
