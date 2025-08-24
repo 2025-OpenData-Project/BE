@@ -1,5 +1,6 @@
 package com.opendata.domain.tourspot.entity;
 
+import com.opendata.domain.address.entity.Address;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,10 @@ public class TourSpotRelated{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     private String tourSpotCode;
 
     private String tourSpotName;
@@ -22,7 +27,9 @@ public class TourSpotRelated{
 
     private String middleCategory;
 
-    private String mapX;
+    private double mapX;
 
-    private String mapY;
+    private double mapY;
+
+
 }

@@ -1,9 +1,11 @@
 package com.opendata.domain.address.entity;
 
+import com.opendata.domain.tourspot.entity.TourSpotRelated;
 import com.opendata.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 
 
 @Entity
@@ -34,4 +36,7 @@ public class Address extends BaseEntity {
 
     @Column(name = "longitude")
     private Double longitude;
+
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourSpotRelated> relatedTourSpots;
 }
