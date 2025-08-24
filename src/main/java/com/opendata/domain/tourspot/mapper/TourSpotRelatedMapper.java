@@ -16,15 +16,12 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TourSpotRelatedMapper {
 
-    @Mapping(target = "relatedTourSpot", source = "relatedTourSpot")
     TourSpotRelated toEntity(
-            @Context TourSpot currentTourSpot,
-            TourSpot relatedTourSpot
-    );
+            String tourSpotCode,
+            String tourSpotName,
+            String largeCategory,
+            String middleCategory,
+            String mapX,
+            String mapY);
 
-    @AfterMapping
-    default void assignTourSpot(@MappingTarget TourSpotRelated entity,
-                                   @Context TourSpot currentTourSpot) {
-        entity.assignTourSpot(currentTourSpot);
-    }
 }
