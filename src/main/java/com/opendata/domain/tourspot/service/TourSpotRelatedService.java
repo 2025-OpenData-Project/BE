@@ -1,8 +1,13 @@
 package com.opendata.domain.tourspot.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opendata.domain.tourspot.dto.MonthlyCongestionDto;
+import com.opendata.domain.address.entity.Address;
+import com.opendata.domain.address.repository.AddressRepository;
+
 import com.opendata.domain.tourspot.dto.TourSpotRelatedDto;
+import com.opendata.domain.tourspot.dto.response.TourSpotRelatedResponse;
+import com.opendata.domain.tourspot.repository.TourSpotRelatedRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,21 +18,32 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TourSpotRelatedService
-{
+public class TourSpotRelatedService {
     private final WebClient openApiWebClient;
     private final ObjectMapper objectMapper;
+    private final AddressRepository addressRepository;
+    private final TourSpotRelatedRepository tourSpotRelatedRepository;
 
     @Value("${api.tour_api_congestion_key}")
     private String secretKey;
 
+
+
+    public List<TourSpotRelatedResponse> fetchRelatedTourSpots(Long addressId){
+        Address address = addressRepository.findById(addressId).orElseThrow();
+        Optional<List<TourSpotRelatedResponse>> tourSpotRelatedListOptional = tourSpotRelatedRepository.findAllByAddress(address);
+
+        return tourSpotRelatedListOptional.orElseGet(ArrayList::new);
+
+    }
 
     public CompletableFuture<TourSpotRelatedDto> fetchRelatedTourSpotData(Long areaId, String tourSpotName) {
         try {
