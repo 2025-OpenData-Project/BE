@@ -12,7 +12,6 @@ import com.opendata.domain.tourspot.dto.MonthlyCongestionDto;
 import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
 import com.opendata.domain.tourspot.entity.*;
 import com.opendata.domain.tourspot.dto.TourSpotRelatedDto;
-import com.opendata.domain.tourspot.entity.*;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
 import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 import com.opendata.domain.tourspot.mapper.*;
@@ -29,8 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -84,7 +82,7 @@ public class TourSpotService
         return t;
     }
 
-    //@Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
