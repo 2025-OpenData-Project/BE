@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTERWITHOUTSEC = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static String getCurrentFormattedDateTime() {
         return LocalDateTime.now().format(FORMATTER);
@@ -28,7 +29,7 @@ public class DateUtil {
     }
 
     public static String getCurrentRoundedFormattedDateTime() {
-        return roundToNearestHour(LocalDateTime.now()).format(FORMATTER);
+        return roundToNearestHour(LocalDateTime.now()).format(FORMATTERWITHOUTSEC);
     }
 
     public static LocalDateTime parseTime(String time){
