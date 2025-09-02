@@ -1,8 +1,11 @@
 package com.opendata.global.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 public class DateUtil {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final DateTimeFormatter FORMATTERWITHOUTSEC = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -16,15 +19,13 @@ public class DateUtil {
         return dateTime.format(FORMATTER);
     }
 
-    public static LocalDateTime floorToHour(LocalDateTime dateTime) {
-        return dateTime.withMinute(0).withSecond(0).withNano(0);
-    }
 
     public static LocalDateTime roundToNearestHour(LocalDateTime dateTime) {
         return dateTime.withMinute(0).withSecond(0).withNano(0);
     }
 
     public static String getCurrentRoundedFormattedDateTime() {
+        log.info("시간 확인: {}", roundToNearestHour(LocalDateTime.now()).format(FORMATTERWITHOUTSEC));
         return roundToNearestHour(LocalDateTime.now()).format(FORMATTERWITHOUTSEC);
     }
 
