@@ -21,11 +21,7 @@ public class DateUtil {
     }
 
     public static LocalDateTime roundToNearestHour(LocalDateTime dateTime) {
-        if (dateTime.getMinute() > 30) {
-            return dateTime.plusHours(1).withMinute(0).withSecond(0).withNano(0);
-        } else {
-            return dateTime.withMinute(0).withSecond(0).withNano(0);
-        }
+        return dateTime.withMinute(0).withSecond(0).withNano(0);
     }
 
     public static String getCurrentRoundedFormattedDateTime() {

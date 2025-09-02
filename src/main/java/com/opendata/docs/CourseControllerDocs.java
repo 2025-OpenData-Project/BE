@@ -5,6 +5,7 @@ import com.opendata.domain.course.dto.response.CourseResponse;
 import com.opendata.global.response.ApiResponse;
 import com.opendata.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -63,7 +64,9 @@ public interface CourseControllerDocs {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam double lat,
             @RequestParam double lon,
+            @Parameter(description = "시작 시간 (형식: yyyy-MM-dd HH:mm)", example = "2025-09-02 09:00")
             @RequestParam String startTime,
+            @Parameter(description = "종료 시간 (형식: yyyy-MM-dd HH:mm)", example = "2025-09-02 18:00")
             @RequestParam String endTime,
             @RequestParam String tourspot
     );

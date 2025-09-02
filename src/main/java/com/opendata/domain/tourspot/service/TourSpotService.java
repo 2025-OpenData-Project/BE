@@ -18,12 +18,16 @@ import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 import com.opendata.domain.tourspot.mapper.*;
 
 import com.opendata.domain.tourspot.repository.*;
+import com.opendata.domain.tourspot.repository.custom.total.CustomTourSpotCombineRepository;
+import com.opendata.global.response.PageResponse;
 import com.opendata.global.response.exception.GlobalException;
 import com.opendata.global.response.status.ErrorStatus;
 import com.opendata.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,12 +48,12 @@ public class TourSpotService
 
     private final TourSpotRepository tourSpotRepository;
     private final TourSpotEventRepository tourSpotEventRepository;
-    private final TourSpotImageRepository tourSpotImageRepository;
     private final TourSpotRelatedRepository tourSpotRelatedRepository;
     private final TourSpotTagRepository tourSpotTagRepository;
+    private final CustomTourSpotCombineRepository combineRepository;
     private final CurrentCongestionRepository currentCongestionRepository;
     private final FutureCongestionRepository futureCongestionRepository;
-    private final MonthlyCongestionRepository monthlyCongestionRepository;
+
 
     private final AddressCache addressCache;
 
@@ -59,7 +63,7 @@ public class TourSpotService
     private final MonthlyCongestionMapper monthlyCongestionMapper;
     private final TourSpotRelatedMapper tourSpotRelatedMapper;
     private final TourSpotDetailMapper tourSpotDetailMapper;
-    private final TourSpotMetaMapper tourSpotMetaMapper;
+
 
     public TourSpotDetailResponse combineTourSpotDetail(Long tourspotId) throws JsonProcessingException {
         TourSpot tourSpot = tourSpotRepository.findById(tourspotId).orElseThrow();
@@ -83,30 +87,24 @@ public class TourSpotService
         );
     }
 
-    public TourSpotMetaResponse combineTourSpotMeta(Long tourspotId) {
-        TourSpot tourSpot = tourSpotRepository.findById(tourspotId).orElseThrow();
-        TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionRepository.findByTourSpotAndCurTime(tourSpot, DateUtil.getCurrentRoundedFormattedDateTime());
-        Optional<TourSpotImage> tourSpotImageOpt = tourSpotImageRepository.findByTourSpot(tourSpot);
+    public PageResponse<List<TourSpotMetaResponse>> combineTourSpotMeta(Pageable pageable) {
 
-        String congestionLabel = null;
-        if (tourSpotCurrentCongestion != null) {
-            congestionLabel = tourSpotCurrentCongestion.getCongestionLvl().getCongestionLabel();
-        }
+        List<TourSpotMetaResponse> content = combineRepository.findMetaPage(pageable);
 
-        String imageUrl = null;
-        if (tourSpotImageOpt.isPresent()){
-            imageUrl = tourSpotImageOpt.get().getTourspotImgUrl();
-        }
+        long total = combineRepository.countAll();
 
-
-        return tourSpotMetaMapper.toResponse(
-                tourSpot,
-                imageUrl,
-                congestionLabel
+        return PageResponse.of(
+                content,
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                content.size(),
+                (int) Math.ceil((double) total / pageable.getPageSize())
         );
     }
 
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+
+
+    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
