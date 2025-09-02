@@ -106,7 +106,7 @@ public class TourSpotService
         );
     }
 
-    //@Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
