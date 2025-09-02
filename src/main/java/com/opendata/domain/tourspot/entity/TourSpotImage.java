@@ -14,9 +14,5 @@ public class TourSpotImage extends TourSpotAssociated {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tourspotImgId;
-
     private String tourspotImgUrl;
-
-    @Column(name = "tourspot_rep_img_yn")
-    private Boolean isRepresentative;
 }

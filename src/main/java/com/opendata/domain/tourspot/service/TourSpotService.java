@@ -10,6 +10,7 @@ import com.opendata.domain.tourspot.dto.CityDataDto;
 
 import com.opendata.domain.tourspot.dto.MonthlyCongestionDto;
 import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
+import com.opendata.domain.tourspot.dto.response.TourSpotMetaResponse;
 import com.opendata.domain.tourspot.entity.*;
 import com.opendata.domain.tourspot.dto.TourSpotRelatedDto;
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
@@ -43,6 +44,7 @@ public class TourSpotService
 
     private final TourSpotRepository tourSpotRepository;
     private final TourSpotEventRepository tourSpotEventRepository;
+    private final TourSpotImageRepository tourSpotImageRepository;
     private final TourSpotRelatedRepository tourSpotRelatedRepository;
     private final TourSpotTagRepository tourSpotTagRepository;
     private final CurrentCongestionRepository currentCongestionRepository;
@@ -57,6 +59,7 @@ public class TourSpotService
     private final MonthlyCongestionMapper monthlyCongestionMapper;
     private final TourSpotRelatedMapper tourSpotRelatedMapper;
     private final TourSpotDetailMapper tourSpotDetailMapper;
+    private final TourSpotMetaMapper tourSpotMetaMapper;
 
     public TourSpotDetailResponse combineTourSpotDetail(Long tourspotId) throws JsonProcessingException {
         TourSpot tourSpot = tourSpotRepository.findById(tourspotId).orElseThrow();
@@ -71,18 +74,39 @@ public class TourSpotService
         }
 
 
-        TourSpotDetailResponse t = tourSpotDetailMapper.toResponse(
+        return tourSpotDetailMapper.toResponse(
                 tourSpot,
                 tourSpotDetailMapper.toAddressDto(address),
                 congestionLabel,
                 tourSpotDetailMapper.toEventDtos(tourSpotEvents),
                 tourSpotDetailMapper.toTagDtos(tourSpotTags)
         );
-        System.out.println(new ObjectMapper().writeValueAsString(t));
-        return t;
     }
 
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    public TourSpotMetaResponse combineTourSpotMeta(Long tourspotId) {
+        TourSpot tourSpot = tourSpotRepository.findById(tourspotId).orElseThrow();
+        TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionRepository.findByTourSpotAndCurTime(tourSpot, DateUtil.getCurrentRoundedFormattedDateTime());
+        Optional<TourSpotImage> tourSpotImageOpt = tourSpotImageRepository.findByTourSpot(tourSpot);
+
+        String congestionLabel = null;
+        if (tourSpotCurrentCongestion != null) {
+            congestionLabel = tourSpotCurrentCongestion.getCongestionLvl().getCongestionLabel();
+        }
+
+        String imageUrl = null;
+        if (tourSpotImageOpt.isPresent()){
+            imageUrl = tourSpotImageOpt.get().getTourspotImgUrl();
+        }
+
+
+        return tourSpotMetaMapper.toResponse(
+                tourSpot,
+                imageUrl,
+                congestionLabel
+        );
+    }
+
+    //@Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();

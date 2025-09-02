@@ -2,14 +2,15 @@ package com.opendata.domain.tourspot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.opendata.docs.TourSpotControllerDocs;
-import com.opendata.domain.tourspot.dto.AreaCongestionDto;
+
 import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
+import com.opendata.domain.tourspot.dto.response.TourSpotMetaResponse;
 import com.opendata.domain.tourspot.dto.response.TourSpotRelatedResponse;
-import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
+
 import com.opendata.domain.tourspot.service.TourSpotRelatedService;
 import com.opendata.domain.tourspot.service.TourSpotService;
 import com.opendata.global.response.ApiResponse;
-import lombok.Getter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,11 @@ public class TourSpotController implements TourSpotControllerDocs {
     @GetMapping("/{tourspotId}")
     public ResponseEntity<ApiResponse<TourSpotDetailResponse>> getTourSpotDetail(@PathVariable("tourspotId") Long tourspotId) throws JsonProcessingException {
         return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotDetail(tourspotId)));
+    }
+
+    @GetMapping("/{tourspotId}/meta")
+    public ResponseEntity<ApiResponse<TourSpotMetaResponse>> getTourSpotMeta(@PathVariable("tourspotId") Long tourspotId) throws JsonProcessingException {
+        return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotMeta(tourspotId)));
     }
 
     @GetMapping("/related/{addressId}")
