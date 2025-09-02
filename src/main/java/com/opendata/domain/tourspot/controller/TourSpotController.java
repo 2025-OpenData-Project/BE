@@ -11,17 +11,20 @@ import com.opendata.domain.tourspot.service.TourSpotRelatedService;
 import com.opendata.domain.tourspot.service.TourSpotService;
 import com.opendata.global.response.ApiResponse;
 
+import com.opendata.global.response.PageResponse;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/tourspot")
 public class TourSpotController implements TourSpotControllerDocs {
     private final TourSpotService tourSpotService;
@@ -45,9 +48,10 @@ public class TourSpotController implements TourSpotControllerDocs {
         return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotDetail(tourspotId)));
     }
 
-    @GetMapping("/{tourspotId}/meta")
-    public ResponseEntity<ApiResponse<TourSpotMetaResponse>> getTourSpotMeta(@PathVariable("tourspotId") Long tourspotId) throws JsonProcessingException {
-        return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotMeta(tourspotId)));
+    @GetMapping("/meta")
+    public ResponseEntity<ApiResponse<PageResponse<List<TourSpotMetaResponse>>>> getTourSpotMeta(@RequestParam(defaultValue = "1") @Min(value = 1) int page, @RequestParam(defaultValue = "5") @Min(value = 1) int size) throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotMeta(pageable)));
     }
 
     @GetMapping("/related/{addressId}")
