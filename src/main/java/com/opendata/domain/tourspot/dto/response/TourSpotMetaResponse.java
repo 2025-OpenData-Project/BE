@@ -1,6 +1,7 @@
 package com.opendata.domain.tourspot.dto.response;
 
 import com.opendata.domain.tourspot.entity.enums.CongestionLevel;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

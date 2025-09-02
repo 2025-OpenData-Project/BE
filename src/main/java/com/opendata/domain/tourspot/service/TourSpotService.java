@@ -23,7 +23,6 @@ import com.opendata.global.response.PageResponse;
 import com.opendata.global.response.exception.GlobalException;
 import com.opendata.global.response.status.ErrorStatus;
 import com.opendata.global.util.DateUtil;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
