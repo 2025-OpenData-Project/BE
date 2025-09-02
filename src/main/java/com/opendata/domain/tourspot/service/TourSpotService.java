@@ -2,7 +2,6 @@ package com.opendata.domain.tourspot.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opendata.domain.address.cache.AddressCache;
 import com.opendata.domain.address.entity.Address;
 import com.opendata.domain.tourspot.api.AreaApi;
