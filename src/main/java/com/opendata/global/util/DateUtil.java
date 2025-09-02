@@ -3,6 +3,7 @@ package com.opendata.global.util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
@@ -25,8 +26,8 @@ public class DateUtil {
     }
 
     public static String getCurrentRoundedFormattedDateTime() {
-        log.info("시간 확인: {}", roundToNearestHour(LocalDateTime.now()).format(FORMATTERWITHOUTSEC));
-        return roundToNearestHour(LocalDateTime.now()).format(FORMATTERWITHOUTSEC);
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+        return roundToNearestHour(LocalDateTime.now(zone)).format(FORMATTERWITHOUTSEC);
     }
 
     public static LocalDateTime parseTime(String time){
