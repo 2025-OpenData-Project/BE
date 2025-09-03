@@ -19,6 +19,29 @@ public class CustomTourSpotCombineRepositoryImpl implements CustomTourSpotCombin
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public List<TourSpotMetaResponse> findMetaByRank() {
+        QTourSpot s = QTourSpot.tourSpot;
+        QTourSpotImage img = QTourSpotImage.tourSpotImage;
+        QTourSpotCurrentCongestion cc = QTourSpotCurrentCongestion.tourSpotCurrentCongestion;
+
+        return queryFactory
+                .select(Projections.constructor(TourSpotMetaResponse.class,
+                        s.tourspotId,
+                        s.tourspotNm,
+                        img.tourspotImgUrl,
+                        cc.congestionLvl
+                ))
+                .from(s)
+                .leftJoin(img).on(img.tourspot.eq(s))
+                .leftJoin(cc).on(cc.tourspot.eq(s)
+                        .and(cc.fcstTime.eq(DateUtil.getCurrentRoundedFormattedDateTime())))
+                .orderBy(s.viewCount.desc())
+                .offset(0)
+                .limit(10)
+                .fetch();
+    }
+
+    @Override
     public List<TourSpotMetaResponse> findMetaPage(Pageable pageable) {
         QTourSpot s = QTourSpot.tourSpot;
         QTourSpotImage img = QTourSpotImage.tourSpotImage;

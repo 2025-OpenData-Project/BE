@@ -47,6 +47,8 @@ public class TourSpot extends BaseEntity {
     @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourSpotMonthlyCongestion> monthlyCongestions;
 
+    private Integer viewCount;
+
 
 
     protected TourSpot(Address address, String tourspotNm){
@@ -78,6 +80,8 @@ public class TourSpot extends BaseEntity {
     }
 
     public void addEvent(TourSpotEvent event) { this.events.add(event); }
+
+    public void increaseViewCount() { this.viewCount++; }
 
 
 }
