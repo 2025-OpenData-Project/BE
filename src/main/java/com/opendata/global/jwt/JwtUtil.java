@@ -96,7 +96,7 @@ public class JwtUtil {
 
     private Claims extractClaims(String token){
         return Jwts.parser()
-                .setSigningKey(secretKey)
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getBody();

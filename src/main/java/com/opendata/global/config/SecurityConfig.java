@@ -92,7 +92,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/oauth2/**","/register/*","/login/oauth2/**", "/swagger-ui/**",    // Swagger UI 관련 경로
-                                "/v3/api-docs/**","/api/tourspot/**", "/course/**","/","/login").permitAll()
+                                "/v3/api-docs/**","/api/tourspot/**", "/course/**","/","/login","/auth").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login((oauth2) -> oauth2
