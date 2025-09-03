@@ -93,6 +93,33 @@ public interface TourSpotControllerDocs {
     })
     ResponseEntity<ApiResponse<TourSpotDetailResponse>> getTourSpotDetail(@PathVariable("tourspotId") Long tourspotId) throws JsonProcessingException;
 
+    @Operation(
+            summary = "조회수 기준 상위 10개 관광지 조회",
+            description = "조회수 기준으로 상위 10개 관광지를 불러오며 순서가 곧 순위를 의미함."
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "관광지 메타 정보 조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "서버 에러",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "서버 에러 응답",
+                                    summary = "예상치 못한 서버 에러",
+                                    value = """
+                                            {
+                                              "success": false,
+                                              "code": "COMMON_500",
+                                              "message": "서버 에러, 관리자에게 문의 바랍니다."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<ApiResponse<List<TourSpotMetaResponse>>> getTourSpotRank();
+
 
     @Operation(
             summary = "관광지 메타 정보 조회",
