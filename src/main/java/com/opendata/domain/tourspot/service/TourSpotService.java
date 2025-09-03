@@ -64,8 +64,10 @@ public class TourSpotService
     private final TourSpotDetailMapper tourSpotDetailMapper;
 
 
+    @Transactional
     public TourSpotDetailResponse combineTourSpotDetail(Long tourspotId) throws JsonProcessingException {
         TourSpot tourSpot = tourSpotRepository.findById(tourspotId).orElseThrow();
+        tourSpot.increaseViewCount();
         Address address = addressCache.getByKorName(tourSpot.getTourspotNm());
         TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionRepository.findByTourSpotAndCurTime(tourSpot, DateUtil.getCurrentRoundedFormattedDateTime());
         List<TourSpotEvent> tourSpotEvents = tourSpotEventRepository.findAllByTourSpot(tourSpot);
@@ -86,6 +88,12 @@ public class TourSpotService
         );
     }
 
+
+
+    public List<TourSpotMetaResponse> combineTourSpotByRank() {
+        return combineRepository.findMetaByRank();
+    }
+
     public PageResponse<List<TourSpotMetaResponse>> combineTourSpotMeta(Pageable pageable) {
 
         List<TourSpotMetaResponse> content = combineRepository.findMetaPage(pageable);
@@ -102,8 +110,7 @@ public class TourSpotService
     }
 
 
-
-    @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();

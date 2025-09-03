@@ -49,6 +49,11 @@ public class TourSpotController implements TourSpotControllerDocs {
         return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotDetail(tourspotId)));
     }
 
+    @GetMapping("/rank")
+    public ResponseEntity<ApiResponse<List<TourSpotMetaResponse>>> getTourSpotMeta() {
+        return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotByRank()));
+    }
+
     @GetMapping("/meta")
     public ResponseEntity<ApiResponse<PageResponse<List<TourSpotMetaResponse>>>> getTourSpotMeta(@RequestParam(defaultValue = "1") @Min(value = 1) int page, @RequestParam(defaultValue = "5") @Min(value = 1) int size) throws JsonProcessingException {
         Pageable pageable = PageRequest.of(page - 1, size);
