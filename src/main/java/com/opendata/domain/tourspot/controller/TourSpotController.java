@@ -50,7 +50,7 @@ public class TourSpotController implements TourSpotControllerDocs {
     }
 
     @GetMapping("/rank")
-    public ResponseEntity<ApiResponse<List<TourSpotMetaResponse>>> getTourSpotMeta() {
+    public ResponseEntity<ApiResponse<List<TourSpotMetaResponse>>> getTourSpotRank() {
         return ResponseEntity.ok(ApiResponse.onSuccess(tourSpotService.combineTourSpotByRank()));
     }
 
