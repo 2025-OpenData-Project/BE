@@ -2,7 +2,7 @@ name: CI / CD
 
 on:
   push:
-    branches: [main]
+    branches: [docs/#73-rank-api-swagger]
 
 jobs:
   CI:

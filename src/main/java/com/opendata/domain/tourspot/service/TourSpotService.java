@@ -111,33 +111,50 @@ public class TourSpotService
 
 
     @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
-    @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
+
+        // 1) 각 Future에 타임아웃 + 예외 흡수
         List<CompletableFuture<CityDataDto>> futures = areaNames.stream()
-                .map(cityDataService::fetchCityData)
+                .map(name -> cityDataService.fetchCityData(name)
+                        .completeOnTimeout(null, 5, java.util.concurrent.TimeUnit.SECONDS) // 5초 타임아웃
+                        .exceptionally(ex -> {
+                            log.warn("fetchCityData failed: area={} err={}", name, ex.toString());
+                            return null; // 실패는 null로
+                        }))
                 .toList();
 
+        // 2) 전부 끝날 때까지 대기 (여기서 예외 안 터지게)
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
+        // 3) 성공분만 취합
         List<CityDataDto> dtoList = futures.stream()
-                .map(CompletableFuture::join)
+                .map(CompletableFuture::join) // 이제 여기서 예외 안 터짐(null만 나옴)
                 .filter(Objects::nonNull)
                 .toList();
 
+        // 4) 저장은 별도 트랜잭션으로 (수집 실패가 있어도 저장은 진행)
+        persistNewSpots(dtoList);
+    }
+
+    @Transactional // 저장에만 트랜잭션
+    public void persistNewSpots(List<CityDataDto> dtoList) {
         // 미리 DB 조회
         List<TourSpot> existing = tourSpotRepository.findAll();
         Map<String, TourSpot> existingMap = existing.stream()
-                .collect(Collectors.toMap(TourSpot::getTourspotNm, t -> t));
+                .collect(Collectors.toMap(TourSpot::getTourspotNm, t -> t, (a,b)->a));
 
         // 없는 것만 생성
         List<TourSpot> newSpots = dtoList.stream()
                 .map(dto -> convertToEntity(dto, existingMap)) // Optional<TourSpot>
-                .filter(Optional::isPresent)                   // 값 있는 것만
-                .map(Optional::get)                            // Optional -> TourSpot
+                .flatMap(opt -> opt.stream())
                 .toList();
 
-        tourSpotRepository.saveAll(newSpots);
+        if (!newSpots.isEmpty()) {
+            tourSpotRepository.saveAll(newSpots);
+            // 필요하면 즉시 flush
+            // tourSpotRepository.saveAllAndFlush(newSpots);
+        }
     }
 
     private Optional<TourSpot> convertToEntity(CityDataDto cityDataDto, Map<String, TourSpot> existingMap) {
