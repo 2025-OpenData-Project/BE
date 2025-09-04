@@ -3,8 +3,10 @@ package com.opendata.domain.tourspot.dto.response;
 
 import com.opendata.domain.tourspot.dto.AddressDto;
 import com.opendata.domain.tourspot.dto.TourSpotEventDto;
+import com.opendata.domain.tourspot.dto.TourSpotMonthlyCongestionDto;
 import com.opendata.domain.tourspot.dto.TourSpotTagDto;
 import com.opendata.domain.tourspot.entity.TourSpotEvent;
+import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 import com.opendata.domain.tourspot.entity.TourSpotTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +25,5 @@ public class TourSpotDetailResponse {
     private String congestionLabel;
     private List<TourSpotEventDto> tourSpotEvents;
     private List<TourSpotTagDto> tourSpotTags;
+    private List<TourSpotMonthlyCongestionDto> tourSpotMonthlyCongestionDtos;
 }

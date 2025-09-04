@@ -26,7 +26,7 @@ public class MonthlyCongestionService
     private final WebClient openApiWebClient;
     private final ObjectMapper objectMapper;
 
-    @Value("${api.tour_api_congestion_key}")
+    @Value("${api.tour_api_tourspot_key}")
     private String secretKey;
 
 
