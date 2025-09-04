@@ -34,6 +34,7 @@ import com.opendata.global.security.CustomUserDetails;
 import com.opendata.global.util.DateUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -116,4 +117,11 @@ public class MypageService {
 
 
     }
+
+    public boolean isPreferenceTourSpot(@AuthenticationPrincipal CustomUserDetails customUserDetails, Long tourSpotId)
+    {
+        Long userId = customUserDetails.getUserId();
+        return tourSpotComponentRepository.existsByUserIdAndTourSpotId(userId, tourSpotId);
+    }
+
 }
