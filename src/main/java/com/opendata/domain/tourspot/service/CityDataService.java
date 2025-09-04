@@ -47,11 +47,11 @@ public class CityDataService
                                 return new ObjectMapper().readValue(body, CityDataDto.class);
                             } catch (Exception ex) {
                                 log.error("JSON 파싱 실패: {}", ex.getMessage());
-                                return null;
+                                return new CityDataDto();
                             }
                         } else {
                             log.warn("⚠️ XML 응답: {}", body);
-                            return null;
+                            return new CityDataDto();
                         }
                     })
                     .toFuture();
