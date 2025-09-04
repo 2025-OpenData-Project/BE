@@ -297,7 +297,7 @@ public class TourSpotService
         }
     }
 
-    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     @Transactional
     public Void updateMonthlyCongestion() {
         List<Address> addressList = addressCache.getAll();
