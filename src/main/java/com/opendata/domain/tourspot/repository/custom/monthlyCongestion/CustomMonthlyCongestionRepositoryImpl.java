@@ -1,7 +1,12 @@
 package com.opendata.domain.tourspot.repository.custom.monthlyCongestion;
 
+import com.opendata.domain.tourspot.entity.QTourSpot;
+import com.opendata.domain.tourspot.entity.QTourSpotMonthlyCongestion;
+import com.opendata.domain.tourspot.entity.TourSpot;
 import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +22,27 @@ public class CustomMonthlyCongestionRepositoryImpl implements CustomMonthlyConge
     public long updateCongestionLevel(List<TourSpotMonthlyCongestion> monthlyCongestions) {
         return 1L;
     }
+
+    @Override
+    @Transactional
+    public void deleteMonthlyCongestionsByTourspotId(Long tourspotId) {
+        QTourSpotMonthlyCongestion mc = QTourSpotMonthlyCongestion.tourSpotMonthlyCongestion;
+
+        queryFactory
+            .delete(mc)
+            .where(mc.tourspot.tourspotId.eq(tourspotId))
+            .execute();
+    }
+
+    @Override
+    public List<TourSpotMonthlyCongestion> findAllByTourspot(TourSpot tourSpot) {
+        QTourSpotMonthlyCongestion mc = QTourSpotMonthlyCongestion.tourSpotMonthlyCongestion;
+
+        return queryFactory
+            .selectFrom(mc)
+            .where(mc.tourspot.tourspotId.eq(tourSpot.getTourspotId()))
+            .orderBy(mc.baseYmd.asc())
+            .fetch();
+    }
+
 }
