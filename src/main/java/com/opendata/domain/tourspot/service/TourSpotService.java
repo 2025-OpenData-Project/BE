@@ -33,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,7 +64,7 @@ public class TourSpotService
     private final MonthlyCongestionMapper monthlyCongestionMapper;
     private final TourSpotRelatedMapper tourSpotRelatedMapper;
     private final TourSpotDetailMapper tourSpotDetailMapper;
-
+    private final MonthlyCongestionRepository monthlyCongestionRepository;
 
     @Transactional
     public TourSpotDetailResponse combineTourSpotDetail(Long tourspotId) throws JsonProcessingException {
@@ -72,6 +74,7 @@ public class TourSpotService
         TourSpotCurrentCongestion tourSpotCurrentCongestion = currentCongestionRepository.findByTourSpotAndCurTime(tourSpot, DateUtil.getCurrentRoundedFormattedDateTime());
         List<TourSpotEvent> tourSpotEvents = tourSpotEventRepository.findAllByTourSpot(tourSpot);
         List<TourSpotTag> tourSpotTags = tourSpotTagRepository.findAllByTourSpot(tourSpot);
+        List<TourSpotMonthlyCongestion> monthlyCongestions = monthlyCongestionRepository.findAllByTourspot(tourSpot);
 
         String congestionLabel = null;
         if (tourSpotCurrentCongestion != null) {
@@ -84,7 +87,9 @@ public class TourSpotService
                 tourSpotDetailMapper.toAddressDto(address),
                 congestionLabel,
                 tourSpotDetailMapper.toEventDtos(tourSpotEvents),
-                tourSpotDetailMapper.toTagDtos(tourSpotTags)
+                tourSpotDetailMapper.toTagDtos(tourSpotTags),
+                tourSpotDetailMapper.toMonthlyCongestionDtos(monthlyCongestions)
+
         );
     }
 
@@ -110,7 +115,7 @@ public class TourSpotService
     }
 
 
-    @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
+    // @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();
@@ -291,6 +296,46 @@ public class TourSpotService
 
         }
     }
+
+    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
+    @Transactional
+    public Void updateMonthlyCongestion() {
+        List<Address> addressList = addressCache.getAll();
+        if (addressList.isEmpty()) {
+            throw new GlobalException(ErrorStatus.ADDRESS_NOT_FOUND);
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+
+        List<CompletableFuture<MonthlyCongestionDto>> dtoFutures = addressList.stream()
+            .map(address -> CompletableFuture.supplyAsync(
+                () -> govCongestionService
+                    .fetchGovCongestionData(address.getArea().getAreaCodeId(), address.getAddressKorNm())
+                    .join(),
+                executor
+            ))
+            .toList();
+
+        CompletableFuture.allOf(dtoFutures.toArray(new CompletableFuture[0])).join();
+
+        dtoFutures.stream()
+            .map(CompletableFuture::join)
+            .filter(Objects::nonNull)
+            .forEach(dto -> {
+                String spotName = extractSpotNameFromDto(dto);
+
+                tourSpotRepository.findByName(spotName).ifPresent(tourSpot -> {
+                    monthlyCongestionRepository.deleteMonthlyCongestionsByTourspotId(tourSpot.getTourspotId());
+
+                    List<TourSpotMonthlyCongestion> newList = convertMonthlyDtoToEntities(dto, tourSpot);
+                    monthlyCongestionRepository.saveAll(newList);
+                });
+            });
+
+        return null;
+    }
+
+
     private List<TourSpotMonthlyCongestion> convertMonthlyDtoToEntities(MonthlyCongestionDto monthlyCongestionDto, TourSpot tourSpot )
     {
         if (monthlyCongestionDto == null || tourSpot == null) {
