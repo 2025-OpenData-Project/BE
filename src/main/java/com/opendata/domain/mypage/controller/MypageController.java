@@ -57,6 +57,14 @@ public class MypageController implements MyPageControllerDocs
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getUser(customUserDetails)));
     }
 
+    @GetMapping("/preferences/check")
+    public ResponseEntity<ApiResponse<Boolean>> CheckTourSpot(
+        @RequestParam Long tourSpotId,
+        @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.isPreferenceTourSpot(customUserDetails, tourSpotId)));
+    }
+
 
 
 
