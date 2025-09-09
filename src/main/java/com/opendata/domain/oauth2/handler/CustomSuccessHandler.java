@@ -55,8 +55,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler
         String token = jwtUtil.createAccess(email);
         String refresh = jwtUtil.createRefresh(email);
 
-        response.addCookie(createCookie("access", token,request));
-        response.addCookie(createCookie("refresh", refresh,request));
+        response.addCookie(createCookie("access", token));
+        response.addCookie(createCookie("refresh", refresh));
         //response.addCookie(createCookie("google_access_token", accessToken));
         String targetUrl = authRequestRepository.loadRedirectUri(request);
         authRequestRepository.removeCookies(response);
@@ -64,25 +64,15 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler
         response.sendRedirect(targetUrl);
     }
 
-    private Cookie createCookie(String key, String value, HttpServletRequest request) {
+    private Cookie createCookie(String key, String value) {
+
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60); // 1시간
+        cookie.setMaxAge(60 * 60);
         cookie.setPath("/");
-
-        String host = request.getServerName();
-        log.info("test{}",host);
-        if (host.contains("localhost")) {
-            // 🔎 개발 모드
-            cookie.setDomain("localhost");
-            cookie.setHttpOnly(false); // document.cookie로 볼 수 있음
-            cookie.setSecure(false);   // http:// 에서도 동작
-        } else {
-            // 🔒 운영 모드
-            cookie.setDomain(".yourse-seoul.com");
-            cookie.setHttpOnly(true);  // JS에서 못 읽음 (보안)
-            cookie.setSecure(true);    // https:// 에서만
-        }
-
+        cookie.setDomain(".yourse-seoul.com");
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setAttribute("SameSite", "None");
         return cookie;
     }
 
