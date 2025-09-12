@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -19,6 +21,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -55,8 +58,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler
         String token = jwtUtil.createAccess(email);
         String refresh = jwtUtil.createRefresh(email);
 
-        response.addCookie(createCookie("access", token));
-        response.addCookie(createCookie("refresh", refresh));
+        addCookie(response, "access", token, 60 * 60);
+        addCookie(response, "refresh", refresh, 60 * 60);
         //response.addCookie(createCookie("google_access_token", accessToken));
         String targetUrl = authRequestRepository.loadRedirectUri(request);
         authRequestRepository.removeCookies(response);
@@ -64,16 +67,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler
         response.sendRedirect(targetUrl);
     }
 
-    private Cookie createCookie(String key, String value) {
+    private void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+            .domain(".yourse-seoul.com")
+            .path("/")
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .maxAge(Duration.ofSeconds(maxAge))
+            .build();
 
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60);
-        cookie.setPath("/");
-        cookie.setDomain(".yourse-seoul.com");
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setAttribute("SameSite", "None");
-        return cookie;
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
 }
