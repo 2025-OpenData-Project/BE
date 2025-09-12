@@ -25,21 +25,21 @@ public class CustomTourSpotCombineRepositoryImpl implements CustomTourSpotCombin
         QTourSpotCurrentCongestion cc = QTourSpotCurrentCongestion.tourSpotCurrentCongestion;
 
         return queryFactory
-            .select(Projections.constructor(TourSpotMetaResponse.class,
-                s.tourspotId,
-                s.tourspotNm,
-                img.tourspotImgUrl.min(),
-                cc.congestionLvl.max()
-            ))
-            .from(s)
-            .leftJoin(img).on(img.tourspot.eq(s))
-            .leftJoin(cc).on(cc.tourspot.eq(s)
-                .and(cc.fcstTime.eq(DateUtil.getCurrentRoundedFormattedDateTime())))
-            .groupBy(s.tourspotId, s.tourspotNm, s.viewCount)
-            .orderBy(s.viewCount.desc())
-            .offset(0)
-            .limit(10)
-            .fetch();
+                .select(Projections.constructor(TourSpotMetaResponse.class,
+                        s.tourspotId,
+                        s.tourspotNm,
+                        img.tourspotImgUrl.min(),
+                        cc.congestionLvl.min()
+                ))
+                .from(s)
+                .leftJoin(img).on(img.tourspot.eq(s))
+                .leftJoin(cc).on(cc.tourspot.eq(s)
+                        .and(cc.fcstTime.eq(DateUtil.getCurrentRoundedFormattedDateTime())))
+                .orderBy(s.tourspotId.desc())
+                .groupBy(s.tourspotId, s.tourspotNm, s.viewCount)
+                .offset(0)
+                .limit(10)
+                .fetch();
     }
 
     @Override
