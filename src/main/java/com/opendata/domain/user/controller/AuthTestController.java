@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.opendata.domain.user.entity.User;
 import com.opendata.domain.user.service.UserService;
 import com.opendata.global.jwt.JwtUtil;
 import com.opendata.global.response.ApiResponse;
@@ -38,10 +39,19 @@ public class AuthTestController {
 	}
 
 	@GetMapping("/test")
-	public ResponseEntity<ApiResponse<Boolean>> test(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+	public ResponseEntity<ApiResponse<Boolean>> test(@RequestParam String token) {
+
 		try {
-			userService.findUserByEmailOrThrow(customUserDetails);
-			return ResponseEntity.ok(ApiResponse.onSuccess(true));
+			jwtUtil.isExpired(token);
+			String email = jwtUtil.getEmail(token);
+
+			boolean exists = false;
+			User user= userService.findUserByEmail(email);
+			if(user!=null) {
+				exists=true;
+			}
+
+			return ResponseEntity.ok(ApiResponse.onSuccess(exists));
 		} catch (Exception e) {
 			return ResponseEntity.ok(ApiResponse.onSuccess(false));
 		}

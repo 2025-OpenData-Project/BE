@@ -21,5 +21,9 @@ public class UserService {
         return Optional.ofNullable(userRepository.findUserByEmail(customUserDetails.getEmail()))
                 .orElseThrow(() -> new UserNotFoundException(UserMessages.USER_NOT_FOUND));
     }
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
 
 }
