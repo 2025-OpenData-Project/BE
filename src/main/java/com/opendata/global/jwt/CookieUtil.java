@@ -49,6 +49,17 @@ public class CookieUtil {
                         }));
     }
 
+    public static Optional<String> getAccessTokenFromRequest(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return Optional.empty();
+        }
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> "access".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst();
+    }
+
+
     public static Optional<String> getRefreshTokenFromRequest(HttpServletRequest request) {
         if (request.getCookies() == null) {
             return Optional.empty();
