@@ -28,24 +28,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<String> accessTokenOpt = CookieUtil.getAccessTokenFromRequest(request);
-        Optional<String> refreshTokenOpt = CookieUtil.getRefreshTokenFromRequest(request);
-
-        if (accessTokenOpt.isPresent()) {
-            String token = accessTokenOpt.get();
-            if (!jwtUtil.isExpired(token)) {
-                String email = jwtUtil.getEmail(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-            filterChain.doFilter(request, response);
-        }
+//        Optional<String> accessTokenOpt = CookieUtil.getAccessTokenFromRequest(request);
+//        Optional<String> refreshTokenOpt = CookieUtil.getRefreshTokenFromRequest(request);
+//
+//        if (accessTokenOpt.isPresent()) {
+//            String token = accessTokenOpt.get();
+//            if (!jwtUtil.isExpired(token)) {
+//                String email = jwtUtil.getEmail(token);
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+//
+//                UsernamePasswordAuthenticationToken authentication =
+//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//            }
+//            filterChain.doFilter(request, response);
+//        }
 
 
         String accessToken = null;
