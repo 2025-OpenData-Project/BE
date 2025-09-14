@@ -42,7 +42,7 @@ public class MypageController implements MyPageControllerDocs
     ){
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getTourSpotDetail(customUserDetails)));
     }
-    @DeleteMapping("/preferences/{tourSpotId}")
+    @DeleteMapping("/preferences/{tourspotId}")
     public ResponseEntity<ApiResponse<Void>> deleteTourSpot(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable("tourspotId") Long tourSpotId
@@ -57,7 +57,7 @@ public class MypageController implements MyPageControllerDocs
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getUser(customUserDetails)));
     }
 
-    @GetMapping("/preferences/check/{tourSpotId}")
+    @GetMapping("/preferences/check/{tourspotId}")
     public ResponseEntity<ApiResponse<Boolean>> CheckTourSpot(
         @PathVariable("tourspotId") Long tourSpotId,
         @AuthenticationPrincipal CustomUserDetails customUserDetails
