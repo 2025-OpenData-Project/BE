@@ -28,62 +28,23 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        Optional<String> accessTokenOpt = CookieUtil.getAccessTokenFromRequest(request);
-//        Optional<String> refreshTokenOpt = CookieUtil.getRefreshTokenFromRequest(request);
-//
-//        if (accessTokenOpt.isPresent()) {
-//            String token = accessTokenOpt.get();
-//            if (!jwtUtil.isExpired(token)) {
-//                String email = jwtUtil.getEmail(token);
-//                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-//
-//                UsernamePasswordAuthenticationToken authentication =
-//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//            }
-//            filterChain.doFilter(request, response);
-//        }
+        Optional<String> accessTokenOpt = CookieUtil.getAccessTokenFromRequest(request);
+        Optional<String> refreshTokenOpt = CookieUtil.getRefreshTokenFromRequest(request);
 
+        if (accessTokenOpt.isPresent()) {
+            String token = accessTokenOpt.get();
+            if (!jwtUtil.isExpired(token)) {
+                String email = jwtUtil.getEmail(token);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-        String accessToken = null;
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-        String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")) {
-            accessToken = header.substring(7);
-        }
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        if (accessToken == null && request.getCookies() != null) {
-            accessToken = Arrays.stream(request.getCookies())
-                .filter(c -> "access".equals(c.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
-        }
-
-        if (accessToken == null) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             filterChain.doFilter(request, response);
-            return;
         }
-
-        try {
-            jwtUtil.isExpired(accessToken);
-        } catch (ExpiredJwtException e) {
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        String email = jwtUtil.getEmail(accessToken);
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
     }
 }
