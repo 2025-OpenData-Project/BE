@@ -129,7 +129,7 @@ public class SecurityConfig {
             "https://api.yourse-seoul.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN", "Cookie"));
         configuration.addExposedHeader("access");
         configuration.addExposedHeader("refresh");
         configuration.setAllowCredentials(true); // 쿠키 허용
