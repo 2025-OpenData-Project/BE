@@ -2,7 +2,7 @@ name: CI / CD
 
 on:
   push:
-    branches: [main]
+    branches: [feat/#82-cookie-credential-parsing]
 
 jobs:
   CI:
