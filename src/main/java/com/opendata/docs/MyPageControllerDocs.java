@@ -106,7 +106,7 @@ public interface MyPageControllerDocs {
     })
     ResponseEntity<com.opendata.global.response.ApiResponse<Void>> updateTourSpot(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @PathVariable Long tourSpotId
+            @PathVariable("tourSpotId") Long tourSpotId
     );
 
     @Operation(summary = "사용자 선호 관광지 조회", description = "사용자가 선호하는 관광지 조회")
@@ -195,7 +195,7 @@ public interface MyPageControllerDocs {
     })
     ResponseEntity<com.opendata.global.response.ApiResponse<Void>> deleteTourSpot(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @PathVariable Long tourSpotId
+            @PathVariable("tourSpotId") Long tourSpotId
     );
 
     @Operation(summary = "사용자 조회", description = "사용자 정보(이메일, 멤버쉽, 이름) 조회")
@@ -285,7 +285,7 @@ public interface MyPageControllerDocs {
         )
     })
     ResponseEntity<com.opendata.global.response.ApiResponse<Boolean>> CheckTourSpot(
-        @PathVariable Long tourSpotId,
+        @PathVariable("tourSpotId") Long tourSpotId,
         @AuthenticationPrincipal CustomUserDetails customUserDetails
     );
 }
