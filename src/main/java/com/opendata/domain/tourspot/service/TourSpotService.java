@@ -54,6 +54,7 @@ public class TourSpotService
     private final CustomTourSpotCombineRepository combineRepository;
     private final CurrentCongestionRepository currentCongestionRepository;
     private final FutureCongestionRepository futureCongestionRepository;
+    private final TourSpotImageRepository tourSpotImageRepository;
 
 
     private final AddressCache addressCache;
@@ -75,7 +76,9 @@ public class TourSpotService
         List<TourSpotEvent> tourSpotEvents = tourSpotEventRepository.findAllByTourSpot(tourSpot);
         List<TourSpotTag> tourSpotTags = tourSpotTagRepository.findAllByTourSpot(tourSpot);
         List<TourSpotMonthlyCongestion> monthlyCongestions = monthlyCongestionRepository.findAllByTourspot(tourSpot);
-
+        String imageUrl = tourSpotImageRepository.findByTourSpot(tourSpot)
+            .orElseThrow(() -> new GlobalException(ErrorStatus.TOURSPOT_NOT_FOUND))
+            .getTourspotImgUrl();
         String congestionLabel = null;
         if (tourSpotCurrentCongestion != null) {
             congestionLabel = tourSpotCurrentCongestion.getCongestionLvl().getCongestionLabel();
@@ -84,6 +87,7 @@ public class TourSpotService
 
         return tourSpotDetailMapper.toResponse(
                 tourSpot,
+                imageUrl,
                 tourSpotDetailMapper.toAddressDto(address),
                 congestionLabel,
                 tourSpotDetailMapper.toEventDtos(tourSpotEvents),
@@ -115,7 +119,7 @@ public class TourSpotService
     }
 
 
-    @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
+    // @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void fetchAllAreaAndSave() {
         List<String> areaNames = new AreaApi.AreaParam().getAreaInfos();

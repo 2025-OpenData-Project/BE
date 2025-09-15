@@ -25,6 +25,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 public interface TourSpotDetailMapper {
 
     @Mapping(target = "tourspotNm", source = "tourSpot.tourspotNm")
+    @Mapping(target = "imageUrl", source = "imageUrl")
     @Mapping(target = "address", source = "address")
     @Mapping(target = "congestionLabel", source = "congestion")
     @Mapping(target = "tourSpotEvents", source = "events")
@@ -32,6 +33,7 @@ public interface TourSpotDetailMapper {
     @Mapping(target = "tourSpotMonthlyCongestionDtos", source = "monthlyCongestions")
     TourSpotDetailResponse toResponse(
             TourSpot tourSpot,
+            String imageUrl,
             AddressDto address,
             String congestion,
             List<TourSpotEventDto> events,
