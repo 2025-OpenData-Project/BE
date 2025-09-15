@@ -7,6 +7,7 @@ import com.opendata.domain.oauth2.repository.OAuth2CookieAuthorizationRequestRep
 import com.opendata.domain.oauth2.service.CustomOAuth2UserService;
 import com.opendata.domain.user.repository.UserRepository;
 import com.opendata.global.jwt.CookieUtil;
+import com.opendata.global.jwt.CustomLogoutFilter;
 import com.opendata.global.jwt.JwtFilter;
 import com.opendata.global.jwt.JwtUtil;
 import com.opendata.global.jwt.LoginFilter;
@@ -29,6 +30,7 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -111,8 +113,9 @@ public class SecurityConfig {
                         .successHandler(customSuccessHandler)
                 );
 
-        http
-                .addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(new CustomLogoutFilter(jwtUtil), LogoutFilter.class);
 //                .addFilterBefore(oAuth2RedirectUriCookieFilter, OAuth2AuthorizationRequestRedirectFilter.class);
 //                .addFilterAfter(new JwtFilter(jwtUtil,userDetailsService), OAuth2LoginAuthenticationFilter.class);
 //                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, cookieUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
