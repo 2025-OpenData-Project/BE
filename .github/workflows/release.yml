@@ -2,7 +2,7 @@ name: CI / CD
 
 on:
   push:
-    branches: [fix/#83-CORS]
+    branches: [main]
 
 jobs:
   CI:
