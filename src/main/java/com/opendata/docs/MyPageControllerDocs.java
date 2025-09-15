@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -105,7 +106,7 @@ public interface MyPageControllerDocs {
     })
     ResponseEntity<com.opendata.global.response.ApiResponse<Void>> updateTourSpot(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam Long tourSpotId
+            @PathVariable("tourspotId") Long tourSpotId
     );
 
     @Operation(summary = "사용자 선호 관광지 조회", description = "사용자가 선호하는 관광지 조회")
@@ -194,7 +195,7 @@ public interface MyPageControllerDocs {
     })
     ResponseEntity<com.opendata.global.response.ApiResponse<Void>> deleteTourSpot(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam Long tourSpotId
+            @PathVariable("tourspotId") Long tourSpotId
     );
 
     @Operation(summary = "사용자 조회", description = "사용자 정보(이메일, 멤버쉽, 이름) 조회")
@@ -284,7 +285,7 @@ public interface MyPageControllerDocs {
         )
     })
     ResponseEntity<com.opendata.global.response.ApiResponse<Boolean>> CheckTourSpot(
-        @RequestParam Long tourSpotId,
+        @PathVariable("tourspotId") Long tourSpotId,
         @AuthenticationPrincipal CustomUserDetails customUserDetails
     );
 }

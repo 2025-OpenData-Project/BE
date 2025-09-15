@@ -28,10 +28,10 @@ public class MypageController implements MyPageControllerDocs
     ){
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getCourses(customUserDetails)));
     }
-    @PostMapping("/preferences")
+    @PostMapping("/preferences/{tourspotId}")
     public ResponseEntity<ApiResponse<Void>> updateTourSpot(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam Long tourSpotId
+            @PathVariable("tourspotId") Long tourSpotId
     ){
         mypageService.saveUserTourSpot(customUserDetails,tourSpotId);
         return ResponseEntity.ok(ApiResponse.onSuccessVoid());
@@ -42,10 +42,10 @@ public class MypageController implements MyPageControllerDocs
     ){
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getTourSpotDetail(customUserDetails)));
     }
-    @DeleteMapping("/preferences")
+    @DeleteMapping("/preferences/{tourspotId}")
     public ResponseEntity<ApiResponse<Void>> deleteTourSpot(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam Long tourSpotId
+            @PathVariable("tourspotId") Long tourSpotId
     ){
         mypageService.deleteTourSpot(customUserDetails,tourSpotId);
         return ResponseEntity.ok(ApiResponse.onSuccessVoid());
@@ -57,9 +57,9 @@ public class MypageController implements MyPageControllerDocs
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.getUser(customUserDetails)));
     }
 
-    @GetMapping("/preferences/check")
+    @GetMapping("/preferences/check/{tourspotId}")
     public ResponseEntity<ApiResponse<Boolean>> CheckTourSpot(
-        @RequestParam Long tourSpotId,
+        @PathVariable("tourspotId") Long tourSpotId,
         @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         return ResponseEntity.ok(ApiResponse.onSuccess(mypageService.isPreferenceTourSpot(customUserDetails, tourSpotId)));
