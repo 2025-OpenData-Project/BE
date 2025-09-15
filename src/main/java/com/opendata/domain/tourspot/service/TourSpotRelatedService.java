@@ -32,7 +32,7 @@ public class TourSpotRelatedService {
     private final AddressRepository addressRepository;
     private final TourSpotRelatedRepository tourSpotRelatedRepository;
 
-    @Value("${api.tour_api_congestion_key}")
+    @Value("${api.tour_api_tourspot_key}")
     private String secretKey;
 
 
