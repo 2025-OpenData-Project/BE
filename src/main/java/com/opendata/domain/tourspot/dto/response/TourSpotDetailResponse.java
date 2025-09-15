@@ -20,9 +20,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourSpotDetailResponse {
+    private Long tourspotId;
     private String tourspotNm;
     private AddressDto address;
     private String congestionLabel;
+    private String imageUrl;
     private List<TourSpotEventDto> tourSpotEvents;
     private List<TourSpotTagDto> tourSpotTags;
     private List<TourSpotMonthlyCongestionDto> tourSpotMonthlyCongestionDtos;
