@@ -59,8 +59,11 @@ public class CustomLogoutFilter extends GenericFilterBean {
 			return;
 		}
 
-		CookieUtil.deleteCookie(request, response, "refresh");
-		CookieUtil.deleteCookie(request, response, "access");
+		String domain = ".yourse-seoul.com";
+		response.addHeader("Set-Cookie",
+			"refresh=; Max-Age=0; Path=/; Domain=" + domain + "; HttpOnly; Secure; SameSite=Strict");
+		response.addHeader("Set-Cookie",
+			"access=; Max-Age=0; Path=/; Domain=" + domain + "; HttpOnly; Secure; SameSite=Strict");
 
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
