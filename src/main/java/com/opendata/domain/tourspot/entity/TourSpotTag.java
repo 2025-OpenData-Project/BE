@@ -19,4 +19,7 @@ public class TourSpotTag extends TourSpotAssociated{
     @Column(name = "tourspot_category")
     private String tourSpotCategory;
 
+    @Column(name = "tag_color")
+    private String tagColor;
+
 }
