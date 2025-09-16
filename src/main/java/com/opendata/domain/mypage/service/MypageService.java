@@ -78,9 +78,7 @@ public class MypageService {
         if (tourSpotComponentRepository.existsByUserIdAndTourSpotId(userId, tourSpotId)) {
             throw new GlobalException(ErrorStatus.TOURSPOT_ALREADY_EXISTS);
         }
-        if (tourSpotComponentRepository.countByUserId(userId) >= 5) {
-            throw new GlobalException(ErrorStatus.TOURSPOT_EXCEEDS);
-        }
+
         TourSpotComponent tourSpotComponent = TourSpotComponent.toTourSpotComponent(userId, tourSpotId);
         tourSpotComponentRepository.save(tourSpotComponent);
     }
