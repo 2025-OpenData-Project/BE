@@ -2,13 +2,11 @@ package com.opendata.domain.tourspot.mapper;
 
 import com.opendata.domain.address.entity.Address;
 import com.opendata.domain.tourspot.dto.AddressDto;
-import com.opendata.domain.tourspot.dto.CityDataDto;
 import com.opendata.domain.tourspot.dto.TourSpotEventDto;
 import com.opendata.domain.tourspot.dto.TourSpotMonthlyCongestionDto;
 import com.opendata.domain.tourspot.dto.TourSpotTagDto;
 import com.opendata.domain.tourspot.dto.response.TourSpotDetailResponse;
 import com.opendata.domain.tourspot.entity.TourSpot;
-import com.opendata.domain.tourspot.entity.TourSpotCurrentCongestion;
 import com.opendata.domain.tourspot.entity.TourSpotEvent;
 import com.opendata.domain.tourspot.entity.TourSpotMonthlyCongestion;
 import com.opendata.domain.tourspot.entity.TourSpotTag;
