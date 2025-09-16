@@ -22,6 +22,7 @@ import java.util.List;
 public class TourSpotDetailResponse {
     private Long tourspotId;
     private String tourspotNm;
+    private String content;
     private AddressDto address;
     private String congestionLabel;
     private String imageUrl;

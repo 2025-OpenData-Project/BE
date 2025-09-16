@@ -32,6 +32,9 @@ public class TourSpot extends BaseEntity {
 
     private String tourspotNm;
 
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
     @OneToMany(mappedBy = "tourspot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourSpotCurrentCongestion> currentCongestions;
 
@@ -48,6 +51,7 @@ public class TourSpot extends BaseEntity {
     private List<TourSpotMonthlyCongestion> monthlyCongestions;
 
     private Integer viewCount;
+
 
 
 

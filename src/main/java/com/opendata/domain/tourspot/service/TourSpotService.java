@@ -83,8 +83,6 @@ public class TourSpotService
         if (tourSpotCurrentCongestion != null) {
             congestionLabel = tourSpotCurrentCongestion.getCongestionLvl().getCongestionLabel();
         }
-
-
         return tourSpotDetailMapper.toResponse(
                 tourSpot,
                 imageUrl,
@@ -95,6 +93,10 @@ public class TourSpotService
                 tourSpotDetailMapper.toMonthlyCongestionDtos(monthlyCongestions)
 
         );
+
+
+
+
     }
 
 
