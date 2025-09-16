@@ -12,12 +12,16 @@ import java.time.LocalDateTime;
 public record CourseComponentDto(
         String tourSpotName,
         Long tourspotId,
+        Long addressId,
+        String tourspotImg,
         String congestionLevel,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         String time, Double lat, Double lon) {
     public static CourseComponentDto from(CourseComponent c, CongestionLevel level) {
         TourSpot tourSpot = c.getTourSpot();
-        return new CourseComponentDto(tourSpot.getTourspotNm(), tourSpot.getTourspotId(), level.getCongestionLabel() ,c.getTourspotTm().toString(),
+        return new CourseComponentDto(tourSpot.getTourspotNm(), tourSpot.getTourspotId(),
+                tourSpot.getAddress().getAddressId(), tourSpot.getImages().get(0).getTourspotImgUrl(),
+                level.getCongestionLabel() ,c.getTourspotTm().toString(),
                 tourSpot.getAddress().getLatitude(), tourSpot.getAddress().getLongitude());
     }
 }
